@@ -28,4 +28,3 @@ auto max(T x, T y) -> std::common_type_t <double, T>
 
 
 #endif
-

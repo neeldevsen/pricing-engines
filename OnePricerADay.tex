@@ -1,0 +1,820 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\numberwithin{equation}{section}
+\usepackage{hyperref}
+\usepackage{url}
+
+\title{
+	Quantitative Finance Pricing Engines\\[0.0em]
+	{\small Derivative Pricing Models from First Principles}
+}
+
+\author{Neel Dev Sen}
+\date{July 2026}
+\author{Neel Dev Sen}
+\date{July 2026}
+\lstdefinestyle{cpp}{
+	language=C++,
+	basicstyle=\footnotesize\ttfamily,
+	keywordstyle=\color{blue},
+	commentstyle=\color{gray},
+	stringstyle=\color{purple},
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	stepnumber=1,
+	frame=single,
+	breaklines=true,
+	showstringspaces=false
+	tabsize=4
+}
+
+\lstdefinestyle{python}{
+	language=Python,
+	basicstyle=\ttfamily\small,
+	keywordstyle=\color{blue},
+	commentstyle=\color{gray},
+	stringstyle=\color{purple},
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	stepnumber=1,
+	frame=single,
+	breaklines=true,
+	showstringspaces=false
+}
+
+\begin{document}
+	
+	\maketitle
+	\newpage
+	\tableofcontents
+	\newpage
+
+\newpage
+\section{Introduction}
+This is a project where I develop derivative pricers using \textbf{C++} and occasionally \textbf{Python}. My goal is to do at least one a day and you can access all of my source files and header files here:  \href{https://github.com/neeldevsen/one-pricer-a-day}{\textbf{GitHub Repo}}
+\newpage
+\part{European Options} \newpage
+\section{Closed-Form Solutions}
+\subsection{Black-Scholes Equation}
+The first option that I am going to be pricing is the European option using the closed-form Black-Scholes equation. \newline \newline In \textbf{GitHub} the full \textbf{C++} script is on this link:
+\href{https://github.com/neeldevsen/one-pricer-a-day/blob/main/day1-BlackScholes.cpp}{\textbf{source file}} \newline
+The \textbf{header file} (first listing) is on this link:
+\href{https://github.com/neeldevsen/one-pricer-a-day/blob/main/functions.hpp}{\textbf{header file}}
+\subsubsection{Risk-Neutral Measure}
+The Black-Scholes equation takes the assumption of the \textbf{risk-neutral pricing measure}
+\begin{equation}
+	dS_t = rS_tdt + \sigma S_t dW_t
+	\label{risk-neutral}
+\end{equation} \cite{shreve2004}
+   \newline where $S_t$ is the price of the asset at a given time $t$, $dS_t$ is the infinitesimal change in the asset's price, $r$ is the risk-free rate of interest, $dt$ is the infinitesimal change in time, $\sigma$ is the implied volatility and $dW_t$ is the infinitesimal change in the \textbf{Wiener F
+	function}. The \textbf{Wiener function} is defined with the property:
+\begin{equation}
+	W_T - W_t \sim \mathcal{N}(0,\sqrt{T-t})
+\end{equation}
+where $\mathcal{N(\mu, \sigma)}$ is the \textbf{normal distribution} with mean $\mu$ and standard-deviation $\sigma$.\cite{lalleyBrownian} \newline \newline
+\subsubsection{Derivation of the Black-Scholes PDE}
+\textbf{Ito's Lemma} states that:
+\begin{equation}
+	df(t,S_t) = \frac{\partial f}{\partial t} dt + \frac {\partial f}{\partial S_t} dS_t + \frac{1}{2}\frac{\partial^2 f}{\partial S_t^2}(dS_t)^2
+	\label{ito}
+\end{equation}
+Substituting equation \ref{risk-neutral} for $dS_t$ we get:
+\begin{equation}
+	\begin{aligned}
+		df(t,S_t) 
+		&= \frac{\partial f}{\partial t} dt 
+		+ \frac{\partial f}{\partial S_t}
+		\left(rS_tdt + \sigma S_t dW_t\right) 
+		+ \frac{1}{2}\frac{\partial^2 f}{\partial S_t^2}
+		\left(rS_tdt + \sigma S_t dW_t\right)^2 \\ 
+		&= \frac{\partial f}{\partial t}dt
+		+ \frac{\partial f}{\partial S_t}
+		\left(rS_tdt + \sigma S_tdW_t\right)
+		+ \frac{1}{2}
+		\frac{\partial^2 f}{\partial S_t^2}
+		\left(r^2S_t^2(dt)^2 + 2r\sigma S_t^2(dt)(dW_t) + \sigma^2S_t^2(dW_t)^2\right)
+	\end{aligned}
+	\label{derivationbspde}
+\end{equation}
+The\textbf{ Ito's multiplication rules} state that: 
+\begin{align}
+	(dt)^2 &= 0 	\label{dtdt}  \\
+	(dt)(dW_t) &= 0 	\label{dtdW} \\
+	(dW_t)^2 &= dt  	\label{dWdW}
+\end{align}
+\newline 
+Substituting equations \ref{dtdt}, \ref{dtdW}, and \ref{dWdW} into equation 	\ref{derivationbspde} we get:
+\begin{equation}
+	\begin{aligned}
+		df(t,S_t)  &= \frac{\partial f}{\partial t}dt
+		+ \frac{\partial f}{\partial S_t}
+		\left(rS_tdt + \sigma S_tdW_t\right)
+		+ \frac{1}{2}
+		\frac{\partial^2 f}{\partial S_t^2}
+		\left(0 + 0 + \sigma^2S_t^2(dt)\right) \\
+		&= \frac{\partial f}{\partial t}dt
+		+ \frac{\partial f}{\partial S_t}
+		\left(rS_tdt + \sigma S_tdW_t\right)
+		+ \frac{1}{2}
+		\frac{\partial^2 f}{\partial S_t^2}
+		\sigma^2S_t^2  \\
+		&= (\frac{\partial f}{\partial t} + rS_t \frac{\partial f}{\partial S_t} + 
+		\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 f}{\partial S_t^2}) dt + \sigma S_t \frac{\partial f}{\partial S_t}dW_t
+	\end{aligned}
+	\label{derivationbspde2}
+\end{equation}
+Define 
+\begin{equation}
+	V(t,S)  \equiv f(t,S_t)
+\end{equation}
+Using the result from equation \ref{derivationbspde2}
+\begin{equation}
+	dV(t,S) = (\frac{\partial V}{\partial t} + rS \frac{\partial V}{\partial S} + 
+	\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2}) dt + \sigma S \frac{\partial V}{\partial S}dW_t
+	\label{dVgbm}
+\end{equation}
+\newline
+Now we will define a delta-hedged portfolio which means a portfolio with an option $V$ as well as shorting $\Delta$ shares with value $S$.  \newline $\Delta$ is an \textbf{option Greek} which is the partial derivative of  the value of an option with respect to the underlying asset price $\Delta = \frac{\partial V}{\partial S}$  \newline The  value of the portfolio $\Pi$ is shown through the equation below
+\begin{equation}
+	\Pi = V - \Delta S 
+	\label{portfolioDef}
+\end{equation}
+For an infinitesimal time step this becomes:
+\begin{equation}
+	d\Pi = dV - \Delta dS 
+\end{equation}
+Substituting equation \ref{dVgbm} for $dV$ and equation \ref{risk-neutral} for $dS$ we get. 
+\begin{equation}
+\begin{aligned}
+	d\Pi &= (\frac{\partial V}{\partial t} + rS \frac{\partial V}{\partial S} + 
+	\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2}) dt + \sigma S \frac{\partial V}{\partial S}dW_t - \Delta (rSdt + \sigma SdW_t)  \\
+	&= (\frac{\partial V}{\partial t} + rS \frac{\partial V}{\partial S} + 
+	\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2} - \Delta rS) dt + (\sigma S \frac{\partial V}{\partial S} - \Delta \sigma S ) dW_t
+\end{aligned}
+\label{dVgbm2}
+\end{equation}
+Since  $\Delta = \frac{\partial V}{\partial S}$ , equation \ref{dVgbm2} becomes:
+\begin{equation}
+\begin{aligned}
+	d\Pi &= (\frac{\partial V}{\partial t} + rS \frac{\partial V}{\partial S} + 
+	\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} -  rS \frac{\partial V}{\partial S} ) dt + (\sigma S \frac{\partial V}{\partial S} -\sigma S \frac{\partial V}{\partial S} ) dW_t \\
+	&= (\frac{\partial V}{\partial t} + rS \frac{\partial V}{\partial S} + 
+	\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} -  rS \frac{\partial V}{\partial S} ) dt \\
+	&= (\frac{\partial V}{\partial t} + 
+	\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} ) dt
+\end{aligned}
+\label{dVgbm3}
+\end{equation}
+The \textbf{no-arbitrage condition} in a \textbf{risk-free portfolio} is:
+\begin{equation}
+	d\Pi = r\Pi dt
+	\label{riskfreearbritrage}
+\end{equation}
+Substituting this into equation \ref{dVgbm3} we get:
+\begin{equation}
+\begin{aligned}
+	r\Pi dt &= (\frac{\partial V}{\partial t} + 
+	\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2}) dt \\
+	r\Pi &= \frac{\partial V}{\partial t} + 
+	\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} 
+\end{aligned}
+\label{dVgbm4}
+\end{equation}
+Substituting equation \ref{portfolioDef} into equation \ref{dVgbm4} we get:
+\begin{equation}
+	\begin{aligned}
+		r(V - \Delta S)&= \frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} \\
+		r(V - \frac{\partial V}{\partial S} S)&= \frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2}  \\
+		rV - rS\frac{\partial V}{\partial S} &= \frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} 
+	\end{aligned} 
+	\label{dVgbm5}
+\end{equation}
+
+This gives us the final partial differential equation which is also the \textbf{Black-Scholes equation}: 
+
+   \begin{equation} 
+\boxed{\frac{\partial V}{\partial t} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} + rS\frac{\partial V}{\partial S} - rV = 0 }
+   \end{equation}
+\newline
+ In this equation $V$ is the option's price, $t$ is the current time. 
+ \newline $\frac{\partial V}{\partial t} $ is the rate of change of the option's price to time, $\frac{\partial V}{\partial S}$ is the rate of change of the option's price to the underlying stock price and  $\frac{\partial^2 V}{\partial S^2}$ is a concavity factor on how the option price changes with the stock price. The Black-Scholes can be solved for a call option and a put option. \cite{haugh2016BlackScholes}.
+ \newpage
+ \subsubsection{Closed-Form Solution for European Call Options}
+ The closed-form solution for the Black-Scholes equation where the option is a call option is: 
+ \begin{equation}
+ \begin{aligned}
+ 	C(t,S) &= S\Phi(d_1) - Ke^{-r(T-t)}\Phi(d_2) \\
+ 	d_1 &= \frac{\ln(\frac{S}{K}) + (r + \frac{1}{2}\sigma^2)(T-t)}{\sigma\sqrt{T-t}} \\ 
+ 	 d_2 &= d_1 - \sigma\sqrt{T-t} \\ 
+ \end{aligned}
+ \label{eq:2.2}
+\end{equation}
+
+  In this equation $T-t$ represents the time to maturity and $K$ represents the strike price. \cite{haugh2016BlackScholes}. \newline \newline
+  $\Phi(z)$ is the standard normal cumulative distribution function which can be represented with the error function $\operatorname{erf}(z)$: 
+  \begin{equation}
+  	\Phi(z) = \frac{1}{2}(1 + \operatorname{erf}(\frac{z}{\sqrt{2}}))
+  	\label{eq:2.3}
+  \end{equation}
+ \newline In C++ this can be implemented as:
+  
+ \begin{lstlisting}[style=cpp]
+#include <iostream>
+#include <cmath>
+#include <type_traits>
+ 
+template <typename T>
+auto normalCDF(T x) -> std::common_type_t <double , T>
+{
+	using commonType = std::common_type_t<double, T>;
+	return static_cast<commonType>(0.5) * (static_cast<commonType>(1) + std::erf(x / std::sqrt(2.0)));
+}
+ \end{lstlisting}
+ The function we are creating is called \textbf{normalCDF}. This listing  uses the \textbf{cmath} header file in order to import \textbf{std::erf}. It also uses a function template with a type placeholder \textbf{T} so that we can use this function for any type given. In order to ensure that this function has at least a type \textbf{double} we use the header file \textbf{type traits} which allows us to specify that we want this function to be at least double in line 6 trailing return type. In line 8 we ensure that the \textbf{commonType} alias used amongst all the literals and variables in this function are also at least of type \textbf{double}. This function returns the result shown in equation \ref{eq:2.3} with a type of at least \textbf{double}. 
+ \newpage
+ Now to implement the function shown in equation \ref{eq:2.2} in C++ we use: 
+ \begin{lstlisting}[style=cpp]
+#include "functions.hpp" // header file for normalCDF
+ 	
+template <typename SType, typename KType, typename rType, typename sigmaType, typename tType>
+auto blackScholesCall(SType S, KType K, rType r, sigmaType sigma, tType t) -> std::common_type_t<double, SType, KType, rType, sigmaType, tType>
+{
+	using commonType = std::common_type_t<double, SType, KType, rType, sigmaType, tType>;
+	auto S_new {static_cast<commonType>(S)};
+	auto K_new {static_cast<commonType>(K)};
+	auto r_new {static_cast<commonType>(r)};
+	auto sigma_new {static_cast<commonType>(sigma)};
+	auto t_new {static_cast<commonType>(t)};
+	auto sqrt_t_new {std::sqrt(t_new)};
+	
+	auto d1 {(std::log(S_new / K_new) + (r_new + (static_cast<commonType>(0.5) * sigma_new * sigma_new) * t_new) / (sigma_new * sqrt_t_new)};
+	auto d2 {d1 - sigma_new * sqrt_t_new};
+	
+	auto C {S_new * normalCDF(d1) - K_new * std::exp(-r_new * t_new) * normalCDF(d2)};
+	return C;
+}
+
+ \end{lstlisting}
+ The function in this listing is called \textbf{blackScholesCall}. This listing again uses the same header files and the same principles as the one before and converts every thing into a \textbf{commonType} of at least type \textbf{double}. The formula for $d_1$ is shown in line 12 and the formula for $d_2$ is shown in line 13.  Finally the result in equation \ref{eq:2.2} is shown in line 16 using the previously defined function \textbf{normalCDF}. The function returns the value of the \textbf{call option} with at least type \textbf{double}. 
+ \newpage
+\subsubsection{Closed-Form Solution for European Put Options}
+ The closed-form solution for the Black-Scholes equation fora put option is: 
+\begin{equation}
+	P(t,S) = Ke^{-r(T-t)}\Phi(-d_2) - S\Phi(-d_1)
+	\label{eq:2.4} 
+\end{equation}
+using the same definitions of $d_1$ and $d_2$ in \ref{eq:2.2} \cite{haugh2016BlackScholes} \newline \newline 
+The implementation of this in C++ is:
+
+ \begin{lstlisting}[style=cpp]
+#include "functions.hpp" // header file for normalCDF
+
+template <typename SType, typename KType, typename rType, typename sigmaType, typename tType>
+auto blackScholesPut(SType S, KType K, rType r, sigmaType sigma, tType t) -> std::common_type_t<double, SType, KType, rType, sigmaType, tType>
+{
+	using commonType = std::common_type_t<double, SType, KType, rType, sigmaType, tType>;
+	auto S_new {static_cast<commonType>(S)};
+	auto K_new {static_cast<commonType>(K)};
+	auto r_new {static_cast<commonType>(r)};
+	auto sigma_new {static_cast<commonType>(sigma)};
+	auto t_new {static_cast<commonType>(t)};
+	auto sqrt_t_new {std::sqrt(t_new)};
+	
+	auto d1 {(std::log(S_new / K_new) + (r_new + (static_cast<commonType>(0.5) * sigma_new * sigma_new) * sqrt_t_new) / (sigma_new * sqrt_t_new)};
+	auto d2 {d1 - sigma_new * std::sqrt(t_new)};
+	
+	auto P {K_new * std::exp(-r_new * t_new) * normalCDF(-d2) - S_new * normalCDF(-d1)};
+	return P;
+}
+\end{lstlisting}
+ The function in this listing is called \textbf{blackScholesPut}. This listing is almost identical to the one for \textbf{blackScholesCall}. The formula for $d_1$ is again shown in line 12 and the formula for $d_2$ is shown in line 13.  Finally the result in equation \ref{eq:2.4} is computed in line 16 (stored as \textbf{P}) using the function \textbf{normalCDF}. The function returns the value of the \textbf{put option} with at least type \textbf{double}. 
+\newpage
+\subsection{Black-76 PDE}
+
+The Black-76 model is just an adaption of the \textbf{Black-Scholes equation} except it uses the price of futures and bonds to price options. \newline A \textbf{future} is a contract where the buyer/seller agrees to purchase/sell an asset at a later fixed time \newline \newline In \textbf{GitHub} the source file can be found here: \href{https://github.com/neeldevsen/one-pricer-a-day/blob/main/day2-black76.cpp}{\textbf{source file}} \newline \newline
+
+For the listings in this section I will continue using the header file \href{https://github.com/neeldevsen/one-pricer-a-day/blob/main/functions.hpp}{\textbf{functions.hpp}} that I defined on day 1.  I will continue to use the \textbf{normalCDF} function from there. 
+
+
+\subsubsection{Derivation of the Black-76 PDE}
+The modelling assumptions are that the futures of forward price process is modelled by \textbf{geometric Brownian motion} shown by the equation:
+\begin{equation}
+	dF_t = \sigma F_t dW_t
+	\label{assumptionBS76}
+\end{equation}
+
+where $F_t$ is the price of a future or a forward at a given time, $dF_t$ is the infinitesimal change of the price of a future of a forward, $\sigma$ is implied volatility and $dW_t$ is the infinitesimal change in the \textbf{Wiener function}.\cite{black1976CommodityContracts} \newline\newline
+Substituting equation \ref{assumptionBS76} into \textbf{Ito's Lemma} \ref{ito}
+
+\begin{equation}
+	\begin{aligned}
+		df(t,S_t) 
+		&= \frac{\partial f}{\partial t} dt 
+		+ \frac{\partial f}{\partial F_t}(\sigma F_t dW_t) 
+		+ \frac{1}{2}\frac{\partial^2 f}{\partial F_t^2}
+		(\sigma F_t dW_t)^2 \\ 
+		&= \frac{\partial f}{\partial t}dt
+		+ \frac{\partial f}{\partial F_t}
+		(\sigma F_t dW_t)
+		+ \frac{1}{2}
+		\frac{\partial^2 f}{\partial F_t^2}
+	(\sigma^2F_t^2(dW_t)^2)
+	\end{aligned}
+	\label{derivationbs76pde}
+\end{equation}
+
+
+Substituting equations \ref{dWdW} into equation 	\ref{derivationbs76pde} we get:
+\begin{equation}
+	\begin{aligned}
+		df(t,S_t)  &= \frac{\partial f}{\partial t}dt
+		+ \frac{\partial f}{\partial F_t}
+		(\sigma F_t )dW_t
+		+ \frac{1}{2}
+		\frac{\partial^2 f}{\partial F_t^2}
+		(\sigma^2F_t^2)dt \\
+		&= (\frac{\partial f}{\partial t} + 
+		\frac{1}{2}\sigma^2F_t^2\frac{\partial^2 f}{\partial F_t^2}) dt + \sigma F_t \frac{\partial f}{\partial F_t}dW_t
+	\end{aligned}
+	\label{derivationbs76pde2}
+\end{equation}
+Define 
+\begin{equation}
+	V(t,S)  \equiv f(t,S_t)
+\end{equation}
+Using the result from equation \ref{derivationbs76pde2}
+\begin{equation}
+	dV(t,S) = (\frac{\partial V}{\partial t} +
+	\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial F^2}) dt + \sigma F \frac{\partial V}{\partial F}dW_t
+	\label{dVgbm76}
+\end{equation}
+\newline
+The thing that is different about the \textbf{delta-hedged portfolio} is that at the time the option is being exchanged, the cost of the \textbf{future} is $0$. 
+\begin{equation}
+	\Pi = V 
+	\label{portfolioDef76}
+\end{equation}
+For an infinitesimal time step, the value of the future increases by $dF$ which leads to
+\begin{equation}
+	d\Pi = dV - \Delta dF 
+\end{equation} where $\Delta = \frac{\partial V}{\partial F}$
+Substituting equation \ref{dVgbm76} for $dV$ and equation \ref{assumptionBS76} for $dF$ we get. 
+\begin{equation}
+	\begin{aligned}
+		d\Pi &= (\frac{\partial V}{\partial t} +
+		\frac{1}{2}\sigma^2F^2\frac{\partial^2 V}{\partial F^2}) dt + \sigma F \frac{\partial V}{\partial F}dW_t - \Delta(\sigma F dW_t) \\
+		&= (\frac{\partial V}{\partial t} +
+		\frac{1}{2}\sigma^2F^2\frac{\partial^2 V}{\partial F^2}) dt + (\sigma F \frac{\partial V}{\partial F} - \Delta \sigma F ) dW_t
+	\end{aligned}
+	\label{dVgbm276}
+\end{equation}
+Since  $\Delta = \frac{\partial V}{\partial F}$ , equation \ref{dVgbm276} becomes:
+\begin{equation}
+	\begin{aligned}
+		d\Pi &= (\frac{\partial V}{\partial t} +
+		\frac{1}{2}\sigma^2F^2\frac{\partial^2 V}{\partial F^2} ) dt + (\sigma F \frac{\partial V}{\partial F} -\sigma F \frac{\partial V}{\partial F} ) dW_t \\
+		&=  (\frac{\partial V}{\partial t} +
+		\frac{1}{2}\sigma^2F^2\frac{\partial^2 V}{\partial F^2} ) dt
+	\end{aligned}
+	\label{dVgbm763}
+\end{equation}
+Using equation \ref{riskfreearbritrage} and substituting this into equation \ref{dVgbm763} we get:
+\begin{equation}
+	\begin{aligned}
+		r\Pi dt &= (\frac{\partial V}{\partial t} +
+		\frac{1}{2}\sigma^2F^2\frac{\partial^2 V}{\partial F^2} ) dt \\
+		r\Pi &= \frac{\partial V}{\partial t} +
+		\frac{1}{2}\sigma^2F^2\frac{\partial^2 V}{\partial F^2} 
+	\end{aligned}
+	\label{dVgbm476}
+\end{equation}
+Substituting equation \ref{portfolioDef76} into equation \ref{dVgbm476} we get:
+\begin{equation}
+		rV = \frac{\partial V}{\partial t} +
+		\frac{1}{2}\sigma^2F^2\frac{\partial^2 V}{\partial F^2}  \\ 
+\end{equation}
+Which finally leads to the equation:
+\begin{equation}
+	\boxed{ \frac{\partial V}{\partial t} +
+	\frac{1}{2}\sigma^2F^2\frac{\partial^2 V}{\partial F^2}  - rV = 0 }
+\end{equation}
+Which is also known as the \textbf{Black-76 Equation}
+
+\newpage
+
+\subsubsection{Black-76 Formula for Call Options}
+The Black-76 Formula for Call options is:
+\begin{equation}
+\begin{aligned}
+	C (t,F) &= e^{-r(T-t)}(F\Phi(d_1) - K\Phi(d_2)) \\
+	d_1 &= \frac{\ln(\frac{F}{K}) + \frac{1}{2}\sigma^2(T-t)}{\sigma \sqrt{T-t}} \\
+	d_2 &= d_1 - \sigma \sqrt{T-t} \\
+\end{aligned}
+\label{eq:2.9}
+\end{equation} \cite{black1976CommodityContracts}
+The implementation in C++ is:
+\begin{lstlisting}[style=cpp]
+#include "functions.hpp" // header file for normalCDF
+	
+template <typename FType, typename KType, typename rType, typename sigmaType, typename tType>
+auto black76Call(FType F, KType K, rType r, sigmaType sigma, tType t) -> std::common_type_t<double, FType, KType, rType, sigmaType, tType>
+{
+	using commonType = std::common_type_t<double, FType, KType, rType, sigmaType, tType>;
+	auto F_new {static_cast<commonType>(F)};
+	auto K_new {static_cast<commonType>(K)};
+	auto r_new {static_cast<commonType>(r)};
+	auto sigma_new {static_cast<commonType>(sigma)};
+	auto t_new {static_cast<commonType>(t)};
+	auto sqrt_t_new {std::sqrt(t_new)};
+	
+	auto d1 {(std::log(F_new / K_new) + (static_cast<commonType>(0.5) * sigma_new * sigma_new) * t_new ) / (sigma_new * sqrt_t_new)};
+	auto d2 {d1 - sigma_new * sqrt_t_new};
+	
+	auto C {(std::exp(-r_new * t_new)) * (F_new * normalCDF(d1) - K_new * normalCDF(d2))};
+	return C;
+}
+\end{lstlisting}
+ $d_1$ is calculated in line 13, $d_2$ is calculated in line 14 and finally equation \ref{eq:2.9} is computed in line 16 (stored as \textbf{C}) and returned in line 17.
+\newpage
+\subsubsection{Black-76 Formula for Put Options}
+The Black-76 Formula for Call options is:
+\begin{equation}
+\begin{aligned}
+	P(t,F) &= e^{-r(T-t)}(K\Phi(-d_2) - F\Phi(-d_1) ) \\
+	d_1 &= \frac{\ln(\frac{F}{K}) +\frac{1}{2}\sigma^2(T-t)}{\sigma \sqrt{T-t}} \\
+	d_2 &= d_1 - \sigma \sqrt{T-t} 
+\label{eq:2.10}
+\end{aligned} 
+\end{equation} \cite{black1976CommodityContracts}
+The implementation in C++ is:
+\begin{lstlisting}[style=cpp]
+#include "functions.hpp" // header file for normalCDF
+	
+template <typename FType, typename KType, typename rType, typename sigmaType, typename tType>
+auto black76Put(FType F, KType K, rType r, sigmaType sigma, tType t) -> std::common_type_t<double, FType, KType, rType, sigmaType, tType>
+{
+	using commonType = std::common_type_t<double, FType, KType, rType, sigmaType, tType>;
+	auto F_new {static_cast<commonType>(F)};
+	auto K_new {static_cast<commonType>(K)};
+	auto r_new {static_cast<commonType>(r)};
+	auto sigma_new {static_cast<commonType>(sigma)};
+	auto t_new {static_cast<commonType>(t)};
+	auto sqrt_t_new {std::sqrt(t_new)};
+	
+	auto d1 {(std::log(F_new / K_new) + (static_cast<commonType>(0.5) * sigma_new * sigma_new) * t_new ) / (sigma_new * sqrt_t_new)};
+	auto d2 {d1 - sigma_new * sqrt_t_new};
+	
+	auto P {std::exp(-r_new * t_new) * (K_new * normalCDF(-d2) - (F_new * normalCDF(-d1)))};
+	return P;
+}
+\end{lstlisting}
+$d_1$ is calculated in line 13, $d_2$ is calculated in line 14 and finally equation \ref{eq:2.10} is computed in line 16 (stored as \textbf{P}) and returned in line 17.
+\newpage
+\subsection{Merton's Dividend-Adjusted Black-Scholes}
+A \textbf{dividend} is cash payment from companies to shareholders for ownership in their stock. The key property with dividends is that each time a dividend is given to the shareholder, the stock price per share drops by that dividend amount and that the dividend grows as the stock grows. 
+\newline\newline
+The first subsubsection is a derivation of the \textbf{Merton's Dividend Adjust Black-Scholes PDE}, followed by two subsubections on the closed form of the call option and on the closed form of the put option. \newline \newline Both of these have my implementations in \textbf{C++}. In \textbf{GitHub} the source file can be found here: \href{https://github.com/neeldevsen/one-pricer-a-day/blob/main/day3-MertonDividendBSE.cpp}{source file} \newline
+as well as the header file: \href{https://github.com/neeldevsen/one-pricer-a-day/blob/main/functions.hpp}{functions.hpp}
+
+
+\subsubsection{Derivation of Merton's Dividend-Adjusted Black-Scholes}
+Let's define the dividend yield to be $q$.  For each infinitesimal step in the stock price $S_t$ we pay a dividend of value $qSdt$. Putting this into the adjusted \textbf{geometric Brownian motion} give us:
+\begin{equation}
+	\begin{aligned}
+			dS_t &= rS_tdt + \sigma S_t dW_t - qS_tdt \\
+			 &= (r-q)S_tdt + \sigma S_t dW_t 
+	\end{aligned}
+	\label{mertonGBM}
+\end{equation}
+where the other variables defined here are the same defined in equation \ref{risk-neutral}. The derivation here is again almost identical to that of the \textbf{Black-Scholes equation}. 
+Substituting equation \ref{mertonGBM} for $dS_t$ we get:
+\begin{equation*}
+df(t,S_t) = \frac{\partial f}{\partial t} dt 
+		+ \frac{\partial f}{\partial S_t}
+		\left((r-q)S_tdt + \sigma S_t dW_t\right) 
+		+ \frac{1}{2}\frac{\partial^2 f}{\partial S_t^2}
+		\left((r-q)S_tdt + \sigma S_t dW_t\right)^2 \\ 
+\end{equation*}
+\begin{equation}
+= \frac{\partial f}{\partial t}dt
+	+ \frac{\partial f}{\partial S_t}
+	\left((r-q)S_tdt + \sigma S_tdW_t\right)
+	+ \frac{1}{2}
+	\frac{\partial^2 f}{\partial S_t^2}
+	\left((r-q)^2S_t^2(dt)^2 + 2r\sigma S_t^2(dt)(dW_t) + \sigma^2S_t^2(dW_t)^2\right)
+	\label{derivationbspdemerton}
+	\end{equation}
+
+Substituting equations \ref{dtdt}, \ref{dtdW}, and \ref{dWdW} into equation 	\ref{derivationbspdemerton} we get:
+\begin{equation}
+	\begin{aligned}
+		df(t,S_t)  &= \frac{\partial f}{\partial t}dt
+		+ \frac{\partial f}{\partial S_t}
+		\left((r-q)S_tdt + \sigma S_tdW_t\right)
+		+ \frac{1}{2}
+		\frac{\partial^2 f}{\partial S_t^2}
+		\left(0 + 0 + \sigma^2S_t^2(dt)\right) \\
+		&= \frac{\partial f}{\partial t}dt
+		+ \frac{\partial f}{\partial S_t}
+		\left((r-q)S_tdt + \sigma S_tdW_t\right)
+		+ \frac{1}{2}
+		\frac{\partial^2 f}{\partial S_t^2}
+		\sigma^2S_t^2  \\
+		&= (\frac{\partial f}{\partial t} + (r-q)S_t \frac{\partial f}{\partial S_t} + 
+		\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 f}{\partial S_t^2}) dt + \sigma S_t \frac{\partial f}{\partial S_t}dW_t
+	\end{aligned}
+	\label{derivationbspde2merton}
+\end{equation}
+Define 
+\begin{equation}
+	V(t,S)  \equiv f(t,S_t)
+\end{equation}
+Using the result from equation \ref{derivationbspde2merton}
+\begin{equation}
+	dV(t,S) = (\frac{\partial V}{\partial t} + (r-q)S \frac{\partial V}{\partial S} + 
+	\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2}) dt + \sigma S \frac{\partial V}{\partial S}dW_t
+	\label{dVgbmmerton}
+\end{equation}
+\newline
+Now we will define a delta-hedged portfolio $\Pi$ and $\Delta = \frac{\partial V}{\partial S}$ that satisfies:
+\begin{equation}
+	\Pi = V - \Delta S 
+	\label{portfolioDefmerton}
+\end{equation}
+For an infinitesimal time step, since we hedge the option by shorting the stock, we must issue dividends with yield $q$ which is represented in an infinitesimal time step as: $- \Delta qS dt$ this becomes:
+\begin{equation}
+	d\Pi = dV - \Delta dS -\Delta qS dt
+\end{equation}
+Substituting equation \ref{dVgbmmerton} for $dV$ and equation \ref{risk-neutral} for $dS$ we get. 
+\begin{equation}
+	\begin{aligned}
+		d\Pi &= (\frac{\partial V}{\partial t} + (r-q)S \frac{\partial V}{\partial S} + 
+		\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2}) dt + \sigma S \frac{\partial V}{\partial S}dW_t - \Delta ((r-q)Sdt + \sigma SdW_t)  - \Delta qS dt \\
+		&= (\frac{\partial V}{\partial t} + (r-q)S \frac{\partial V}{\partial S } + 
+		\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2} - \Delta (r-q)S - \Delta qS ) dt + (\sigma S \frac{\partial V}{\partial S} - \Delta \sigma S ) dW_t
+	\end{aligned}
+	\label{dVgbm2merton}
+\end{equation}
+Since  $\Delta = \frac{\partial V}{\partial S}$ , equation \ref{dVgbm2merton} becomes:
+\begin{equation}
+	\begin{aligned}
+		d\Pi &= (\frac{\partial V}{\partial t} + (r-q)S \frac{\partial V}{\partial S} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} -  (r-q)S \frac{\partial V}{\partial S} - qS \frac{\partial V}{\partial S} ) dt + (\sigma S \frac{\partial V}{\partial S} -\sigma S \frac{\partial V}{\partial S} ) dW_t \\
+		&= (\frac{\partial V}{\partial t} + (r-q)S \frac{\partial V}{\partial S} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} -  (r-q)S \frac{\partial V}{\partial S} - qS \frac{\partial V}{\partial S}) dt \\
+		&= (\frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - qS \frac{\partial V}{\partial S}) dt
+	\end{aligned}
+	\label{dVgbm3merton}
+\end{equation}
+Substituting equation \ref{riskfreearbritrage} into equation \ref{dVgbm3merton} we get:
+\begin{equation}
+	\begin{aligned}
+		r\Pi dt &= (\frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - qS \frac{\partial V}{\partial S}) dt \\
+		r\Pi &= \frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - qS \frac{\partial V}{\partial S}
+	\end{aligned}
+	\label{dVgbm4merton}
+\end{equation}
+Substituting equation \ref{portfolioDefmerton} into equation \ref{dVgbm4merton} we get:
+\begin{equation}
+	\begin{aligned}
+		r(V - \Delta S)&= \frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - qS \frac{\partial V}{\partial S}\\
+		r(V - \frac{\partial V}{\partial S} S)&= \frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - qS \frac{\partial V}{\partial S}  \\
+		rV - rS\frac{\partial V}{\partial S} &= \frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - qS \frac{\partial V}{\partial S} 
+	\end{aligned} 
+	\label{dVgbm5merton}
+\end{equation}
+This finally gives us the equation:
+   \begin{equation} 
+	\boxed{\frac{\partial V}{\partial t} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} + (r-q)S\frac{\partial V}{\partial S} - rV = 0 }
+\end{equation}
+which is the \textbf{Black-Scholes PDE with Merton's dividend adjustment}.  \cite{buchanan2014ExtensionsBS} \newline \newline
+This PDE uses the same variables as the \textbf{Black-Scholes PDE} with the only addition being the \textbf{dividend yield} $q$. $q$ affects the equaton by modifying $rS\frac{\partial V}{\partial S}$ (Black-Scholes PDE ) into the new $(r-q)S\frac{\partial V}{\partial S}$
+\newpage
+\subsubsection{Closed-Form Solution to Call Options with Dividends}
+ \begin{equation}
+	\begin{aligned}
+		C(t,S) &= Se^{-q(T-t)}\Phi(d_1) - Ke^{-r(T-t)}\Phi(d_2) \\
+		d_1 &= \frac{\ln(\frac{S}{K}) + (r - q + \frac{1}{2}\sigma^2)(T-t)}{\sigma\sqrt{T-t}} \\ 
+		d_2 &= d_1 - \sigma\sqrt{T-t} \\ 
+	\end{aligned}
+	\label{eq:2.48}
+\end{equation} \cite{buchanan2014ExtensionsBS}
+The only thing that changed from equation \ref{eq:2.2} is the $d_1$ term has a $-q$ term as well as the fact that in $C(t,S)$, the $S$ term has an $e^{-q(T-t)}$ term multiplied to it.
+\newline \newline
+Implementation in C++
+\begin{lstlisting}[style=cpp]
+#include "functions.hpp" // header file for normalCDF
+template <typename SType, typename KType, typename rType, typename qType, typename sigmaType, typename tType>
+auto bsDividendCall(SType S, KType K, rType r, qType q, sigmaType sigma, tType t) -> std::common_type_t<double, SType, KType, rType, qType, sigmaType, tType>
+{
+	using commonType = std::common_type_t<double, SType, KType, rType, qType, sigmaType, tType>;
+	auto S_new {static_cast<commonType>(S)};
+	auto K_new {static_cast<commonType>(K)};
+	auto r_new {static_cast<commonType>(r)};
+	auto q_new {static_cast<commonType>(q)};
+	auto sigma_new {static_cast<commonType>(sigma)};
+	auto t_new {static_cast<commonType>(t)};
+	auto sqrt_t_new {std::sqrt(t_new)};
+	
+	auto d1 {(std::log(S_new / K_new) + (r_new - q_new + (static_cast<commonType>(0.5) * sigma_new * sigma_new) ) * t_new) / (sigma_new * sqrt_t_new)};
+	auto d2 {d1 - sigma_new * sqrt_t_new};
+	
+	auto C {S_new * std::exp(-q_new * t_new) * normalCDF(d1) - K_new * std::exp(-r_new * t_new) * normalCDF(d2)};
+	return C; }
+	\end{lstlisting}
+This function is similar to the call function made in day 1, however the function \textbf{bsDividendCall} also has the parameter \textbf{q}. This is again converted using type conversion with all the other parameters. The addition of \textbf{q} affects line 14 with the $(r-q)$ term instead of $r$. The addition also affects line 17 where the value of $d_1$ is affected with $Se^{-q(T-t)}$ versus $S$. This function calculates the formula in \ref{eq:2.48} and stores it as \textbf{C} with a type of at least \textbf{double} and then returns it in line 18.
+\newpage
+\subsubsection{Closed-Form Solution to Put Options with Dividends}
+\begin{equation}
+	\begin{aligned}
+		P(t,S) &= Ke^{-r(T-t)}\Phi(-d_2)  - Se^{-q(T-t)}\Phi(-d_1) - \\
+		d_1 &= \frac{\ln(\frac{S}{K}) + (r - q + \frac{1}{2}\sigma^2)(T-t)}{\sigma\sqrt{T-t}} \\ 
+		d_2 &= d_1 - \sigma\sqrt{T-t} \\ 
+	\end{aligned}
+	\label{eq:2.49}
+\end{equation} \cite{buchanan2014ExtensionsBS}
+Again just like with the call, the only changes from equation \ref{eq:2.4} is the fact that the $d_1$ term has a $-q$ term as well as the fact that in $P(t,S)$, the $S$ term has an $e^{-q(T-t)}$ term multiplied to it.
+\newline \newline
+Implementation in C++
+\begin{lstlisting}[style=cpp]
+#include "functions.hpp" // header file for normalCDF
+template <typename SType, typename KType, typename rType, typename qType, typename sigmaType, typename tType>
+auto bsDividendPut(SType S, KType K, rType r, qType q, sigmaType sigma, tType t) -> std::common_type_t<double, SType, KType, rType, qType, sigmaType, tType>
+{
+	using commonType = std::common_type_t<double, SType, KType, rType, qType, sigmaType, tType>;
+	auto S_new {static_cast<commonType>(S)};
+	auto K_new {static_cast<commonType>(K)};
+	auto r_new {static_cast<commonType>(r)};
+	auto q_new {static_cast<commonType>(q)};
+	auto sigma_new {static_cast<commonType>(sigma)};
+	auto t_new {static_cast<commonType>(t)};
+	auto sqrt_t_new {std::sqrt(t_new)};
+	
+	auto d1 {(std::log(S_new / K_new) + (r_new - q_new + (static_cast<commonType>(0.5) * sigma_new * sigma_new) ) * t_new) / (sigma_new * sqrt_t_new)};
+	auto d2 {d1 - sigma_new * sqrt_t_new};
+	
+	auto P {K_new * std::exp(-r_new * t_new) * normalCDF(-d2) - S_new * std::exp(-q_new * t_new) * normalCDF(-d1)};
+	return P; 
+}
+\end{lstlisting}
+Function got the same changes as in the previous listing above, where it calculates $d_1$ in line 14, $d_2$ in line 15 and uses the fomula \ref{eq:2.49}  in line 17 and stores it as variable \textbf{P} and then returns it in line 18.
+\subsection{Garman-Kohlhagen FX Option Pricing}
+\subsubsection{Derivation of Garman-Kohlhagen FX  Black-Scholes}
+Let's define the dividend yield to be $q$.  For each infinitesimal step in the stock price $S_t$ we pay a dividend of value $qSdt$. Putting this into the adjusted \textbf{geometric Brownian motion} give us:
+\begin{equation}
+	\begin{aligned}
+		dS_t &= r_d S_tdt + \sigma S_t dW_t - r_f S_tdt \\
+		&= (r_d- r_f)S_tdt + \sigma S_t dW_t 
+	\end{aligned}
+	\label{mertonGBM}
+\end{equation}
+where the other variables defined here are the same defined in equation \ref{risk-neutral}. The derivation here is again almost identical to that of the \textbf{Black-Scholes equation}. 
+Substituting equation \ref{mertonGBM} for $dS_t$ we get:
+\begin{equation*}
+	df(t,S_t) = \frac{\partial f}{\partial t} dt 
+	+ \frac{\partial f}{\partial S_t}
+	\left((r_d- r_f)S_tdt + \sigma S_t dW_t\right) 
+	+ \frac{1}{2}\frac{\partial^2 f}{\partial S_t^2}
+	\left((r-q)S_tdt + \sigma S_t dW_t\right)^2 \\ 
+\end{equation*}
+\begin{equation}
+	= \frac{\partial f}{\partial t}dt
+	+ \frac{\partial f}{\partial S_t}
+	\left((r_d- r_f)S_tdt + \sigma S_tdW_t\right)
+	+ \frac{1}{2}
+	\frac{\partial^2 f}{\partial S_t^2}
+	\left((r_d- r_f)^2S_t^2(dt)^2 + 2r\sigma S_t^2(dt)(dW_t) + \sigma^2S_t^2(dW_t)^2\right)
+	\label{derivationbspdemerton}
+\end{equation}
+
+Substituting equations \ref{dtdt}, \ref{dtdW}, and \ref{dWdW} into equation 	\ref{derivationbspdemerton} we get:
+\begin{equation}
+	\begin{aligned}
+		df(t,S_t)  &= \frac{\partial f}{\partial t}dt
+		+ \frac{\partial f}{\partial S_t}
+		\left((r_d- r_f)S_tdt + \sigma S_tdW_t\right)
+		+ \frac{1}{2}
+		\frac{\partial^2 f}{\partial S_t^2}
+		\left(0 + 0 + \sigma^2S_t^2(dt)\right) \\
+		&= \frac{\partial f}{\partial t}dt
+		+ \frac{\partial f}{\partial S_t}
+		\left((r_d- r_f)S_tdt + \sigma S_tdW_t\right)
+		+ \frac{1}{2}
+		\frac{\partial^2 f}{\partial S_t^2}
+		\sigma^2S_t^2  \\
+		&= (\frac{\partial f}{\partial t} + (r_d- r_f)S_t \frac{\partial f}{\partial S_t} + 
+		\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 f}{\partial S_t^2}) dt + \sigma S_t \frac{\partial f}{\partial S_t}dW_t
+	\end{aligned}
+	\label{derivationbspde2merton}
+\end{equation}
+Define 
+\begin{equation}
+	V(t,S)  \equiv f(t,S_t)
+\end{equation}
+Using the result from equation \ref{derivationbspde2merton}
+\begin{equation}
+	dV(t,S) = (\frac{\partial V}{\partial t} + (r-q)S \frac{\partial V}{\partial S} + 
+	\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2}) dt + \sigma S \frac{\partial V}{\partial S}dW_t
+	\label{dVgbmmerton}
+\end{equation}
+\newline
+Now we will define a delta-hedged portfolio $\Pi$ and $\Delta = \frac{\partial V}{\partial S}$ that satisfies:
+\begin{equation}
+	\Pi = V - \Delta S 
+	\label{portfolioDefmerton}
+\end{equation}
+For an infinitesimal time step we hedge the option by shorting $\Delta$ stocks. Since these stocks are in foreign currency, we must also give out foreign interest accumulated through the risk-free rate of interest in that country $r_f$. This is the reason behind the $-\Delta r_fSdt$ term
+\begin{equation}
+	d\Pi = dV - \Delta dS -\Delta r_f S dt
+\end{equation}
+Substituting equation \ref{dVgbmmerton} for $dV$ and equation \ref{risk-neutral} for $dS$ we get. 
+\begin{equation}
+	\begin{aligned}
+		d\Pi &= (\frac{\partial V}{\partial t} + (r_d- r_f)S \frac{\partial V}{\partial S} + 
+		\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2}) dt + \sigma S \frac{\partial V}{\partial S}dW_t - \Delta ((r_d- r_f)Sdt + \sigma SdW_t)  - \Delta r_f S dt \\
+		&= (\frac{\partial V}{\partial t} + (r_d- r_f)S \frac{\partial V}{\partial S } + 
+		\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2} - \Delta (r_d- r_f)S - \Delta r_f S ) dt + (\sigma S \frac{\partial V}{\partial S} - \Delta \sigma S ) dW_t
+	\end{aligned}
+	\label{dVgbm2merton}
+\end{equation}
+Since  $\Delta = \frac{\partial V}{\partial S}$ , equation \ref{dVgbm2merton} becomes:
+\begin{equation}
+	\begin{aligned}
+		d\Pi &= (\frac{\partial V}{\partial t} + (r_d- r_f)S \frac{\partial V}{\partial S} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} -  (r_d- r_f)S \frac{\partial V}{\partial S} - r_fS \frac{\partial V}{\partial S} ) dt + (\sigma S \frac{\partial V}{\partial S} -\sigma S \frac{\partial V}{\partial S} ) dW_t \\
+		&= (\frac{\partial V}{\partial t} + (r_d- r_f)S \frac{\partial V}{\partial S} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} -  (r_d- r_f)S \frac{\partial V}{\partial S} - r_f S \frac{\partial V}{\partial S}) dt \\
+		&= (\frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - r_f S \frac{\partial V}{\partial S}) dt
+	\end{aligned}
+	\label{dVgbm3merton}
+\end{equation}
+Substituting equation \ref{riskfreearbritrage} into equation \ref{dVgbm3merton} we get:
+\begin{equation}
+	\begin{aligned}
+		r_d \Pi dt &= (\frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - r_f S \frac{\partial V}{\partial S}) dt \\
+		r_d \Pi &= \frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - r_f S \frac{\partial V}{\partial S}
+	\end{aligned}
+	\label{dVgbm4merton}
+\end{equation}
+Substituting equation \ref{portfolioDefmerton} into equation \ref{dVgbm4merton} we get:
+\begin{equation}
+	\begin{aligned}
+		r_d (V - \Delta S)&= \frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - r_f S \frac{\partial V}{\partial S}\\
+		r_d (V - \frac{\partial V}{\partial S} S)&= \frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - r_f S \frac{\partial V}{\partial S}  \\
+		r_d V - r_d S\frac{\partial V}{\partial S} &= \frac{\partial V}{\partial t} + 
+		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - r_fS \frac{\partial V}{\partial S} 
+	\end{aligned} 
+	\label{dVgbm5merton}
+\end{equation}
+This finally gives us the equation:
+\begin{equation} 
+	\boxed{\frac{\partial V}{\partial t} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} + (r_d- r_f)S\frac{\partial V}{\partial S} - rV = 0 }
+\end{equation}
+which is the \textbf{Black-Scholes PDE with Merton's dividend adjustment}.  \cite{buchanan2014ExtensionsBS} \newline \newline
+This PDE uses the same variables as the \textbf{Black-Scholes PDE} with the only addition being the \textbf{dividend yield} $q$. $q$ affects the equaton by modifying $rS\frac{\partial V}{\partial S}$ (Black-Scholes PDE ) into the new $(r-q)S\frac{\partial V}{\partial S}$
+\newpage
+\begin{thebibliography}	{9} 
+\bibitem{shreve2004}
+Shreve, S. (2004). \textit{Stochastic Calculus for Finance I: The Binomial Asset Pricing Model}. Springer Science \& Business Media.
+
+\bibitem{lalleyBrownian}
+Lalley, S. P. (n.d.). \textit{Brownian motion}. \url{https://galton.uchicago.edu/~lalley/Courses/313/BrownianMotionCurrent.pdf}
+
+\bibitem{haugh2016BlackScholes}
+Haugh, M. (2016). \textit{The Black-Scholes model} (IEOR E4706: Foundations of Financial Engineering lecture notes). Columbia University. \url{https://www.columbia.edu/~mh2078/FoundationsFE/BlackScholes.pdf}
+
+\bibitem{black1976CommodityContracts}
+Black, F. (1976). The pricing of commodity contracts. \textit{Journal of Financial Economics}, \textit{3}(1--2), 167--179. \url{https://doi.org/10.1016/0304-405X(76)90024-6}
+
+
+\bibitem{buchanan2014ExtensionsBS}
+Buchanan, J. R. (2014). \textit{Extensions to the Black-Scholes equation: An undergraduate introduction to financial mathematics}. Millersville University. \url{https://sites.millersville.edu/rbuchanan/book/Extensions.pdf}
+
+\end{thebibliography}
+
+\end{document}
