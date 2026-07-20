@@ -4,7 +4,7 @@
 
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 
-struct OptionDataGBM
+struct OptionDataBS
 {
     using CommonType = std::common_type_t <double, S_t, K_t, r_t, sigma_t, T_t>;
     CommonType spot {};
@@ -15,7 +15,7 @@ struct OptionDataGBM
 };
 
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
-OptionDataGBM(S_t, K_t, r_t, sigma_t, T_t) -> OptionDataGBM<S_t, K_t, r_t, sigma_t, T_t>;
+OptionDataBS(S_t, K_t, r_t, sigma_t, T_t) -> OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>;
 #endif
 
 

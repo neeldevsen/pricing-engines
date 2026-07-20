@@ -1,8 +1,8 @@
 #include <iostream>
 #include <cmath>
 #include <type_traits>
-#include "functions.hpp"
-#include "black76_structs.hpp"
+#include "../Headers/functions.hpp"
+#include "../Headers/black76_structs.hpp"
 
 template <typename F_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 auto black76Call(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data) -> decltype(data.future)
@@ -32,7 +32,7 @@ auto black76Put(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data) -> declt
 
 int main()
 {
-    OptionDataB76 myOption {100, 100, 0.01, 0.3, 30};
+    OptionDataB76 myOption {80, 100, 0.01, 0.3, 30};
     std::cout << "Call price: $" << black76Call(myOption) << '\n';
     std::cout << "Put price: $" << black76Put(myOption) << '\n';
    

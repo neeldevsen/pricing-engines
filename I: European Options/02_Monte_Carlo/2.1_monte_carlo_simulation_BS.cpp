@@ -5,7 +5,7 @@
 #include "../Headers/functions.hpp"
 
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
-auto monteCarloCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int simulations) -> decltype(data.spot)
+auto monteCarloBSCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int simulations) -> decltype(data.spot)
 {
     using commonType = decltype(data.spot);
     std::random_device rd{};
@@ -16,7 +16,7 @@ auto monteCarloCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int s
     for (int i {}; i < simulations; ++i)
     {
         commonType S_final {data.spot * std::exp((data.rate - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
-        payoffs += max(S_final, data.strike);
+        payoffs += max(S_final - data.strike, static_cast<commonType>(0));
     }
     payoffs /= simulations;
     
@@ -24,7 +24,7 @@ auto monteCarloCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int s
 }
 
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
-auto monteCarloPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int simulations) -> decltype(data.spot)
+auto monteCarloBSPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int simulations) -> decltype(data.spot)
 {
     using commonType = decltype(data.spot);
     std::random_device rd{};
@@ -35,7 +35,7 @@ auto monteCarloPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int si
     for (int i {}; i < simulations; ++i)
     {
         commonType S_final {data.spot * std::exp((data.rate - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
-        payoffs += max(data.strike, S_final);
+        payoffs += max(data.strike - S_final , static_cast<commonType>(0));
     }
     payoffs /= simulations;
 
@@ -47,8 +47,8 @@ int main()
 {
     int simulations {10000000};
     OptionDataBS myOption {100, 100, 0.01, 0.3, 30};
-    std::cout << "Call price: $" << monteCarloCall(myOption, simulations) << '\n';
-    std::cout << "Call price: $" << monteCarloPut(myOption, simulations) << '\n';
+    std::cout << "Call price: $" << monteCarloBSCall(myOption, simulations) << '\n';
+    std::cout << "Call price: $" << monteCarloBSPut(myOption, simulations) << '\n';
 
     return 0;
 }
