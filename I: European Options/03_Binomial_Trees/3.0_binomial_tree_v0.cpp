@@ -46,7 +46,7 @@ auto binomialTreeBSPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, co
 int main()
 {
     OptionDataBS myOption {100, 100, 0.01, 0.3, 30};
-    int iterations {1000};
+    int iterations {1030};
     std::cout << "Call price: $" << binomialTreeBSCall(myOption, iterations) << '\n';
     std::cout << "Put price: $" << binomialTreeBSPut(myOption, iterations) << '\n';
 
@@ -54,3 +54,4 @@ int main()
     return 0;  
 }
 
+// after n = 1030 it breaks

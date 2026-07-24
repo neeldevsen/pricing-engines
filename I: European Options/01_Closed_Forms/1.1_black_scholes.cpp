@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <type_traits>
+#include <iomanip>
 #include "../Headers/functions.hpp"
 #include "../Headers/black_scholes_struct.hpp"
 
@@ -32,7 +33,8 @@ auto blackScholesPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data) -> d
 
 int main()
 {
-    OptionDataBS myOption {100, 100, 0.01, 0.3, 30};
+    OptionDataBS myOption {100.0, 100.0, 0.05, 0.2, 1.0};
+    std::cout << std::setprecision(17);
     std::cout << "Call price: $" << blackScholesCall(myOption) << '\n';
     std::cout << "Put price: $" << blackScholesPut(myOption) << '\n';
 

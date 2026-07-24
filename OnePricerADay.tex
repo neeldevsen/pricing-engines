@@ -7,50 +7,58 @@
 \usepackage{tikz}
 \usepackage{hyperref}
 \usepackage{float}
-\usepackage{listings}
 \usepackage{xcolor}
 \usepackage{tikz}
+\usepackage{needspace}
+\usepackage{placeins}
 \usetikzlibrary{arrows.meta}
 \numberwithin{equation}{section}
 \usepackage{hyperref}
 \usepackage{url}
+\usepackage{caption}
+
+\captionsetup[listing]{
+	skip=4pt
+}
 
 \title{
 	Quantitative Finance Pricing Engines\\[0.0em]
-	{\small Derivative Pricing Models from First Principles}
 }
 
 \author{Neel Dev Sen}
 \date{July 2026}
 \author{Neel Dev Sen}
 \date{July 2026}
-\lstdefinestyle{cpp}{
-	language=C++,
-	basicstyle=\footnotesize\ttfamily,
-	keywordstyle=\color{blue},
-	commentstyle=\color{gray},
-	stringstyle=\color{purple},
-	numbers=left,
-	numberstyle=\tiny\color{gray},
-	stepnumber=1,
+\usepackage[newfloat]{minted}
+\usemintedstyle{manni}
+
+
+
+\setminted[cpp]{
+	fontsize=\footnotesize,
+	linenos,
+	numbersep=8pt,
 	frame=single,
-	breaklines=true,
-	showstringspaces=false
+	breaklines,
+	breakanywhere,
 	tabsize=4
 }
 
-\lstdefinestyle{python}{
-	language=Python,
-	basicstyle=\ttfamily\small,
-	keywordstyle=\color{blue},
-	commentstyle=\color{gray},
-	stringstyle=\color{purple},
-	numbers=left,
-	numberstyle=\tiny\color{gray},
-	stepnumber=1,
+
+
+\SetupFloatingEnvironment{listing}{
+	name=Listing,
+	within=section
+}
+
+\setminted[python]{
+	fontsize=\small,
+	linenos,
+	numbersep=8pt,
 	frame=single,
-	breaklines=true,
-	showstringspaces=false
+	breaklines,
+	breakanywhere,
+	tabsize=4
 }
 
 \begin{document}
@@ -61,7 +69,8 @@
 	\newpage
 
 \newpage
-\section{Introduction}
+\setcounter{section}{0}
+\section*{Introduction}
 This is a project where I develop derivative pricers using \textbf{C++} and occasionally \textbf{Python}. My goal is to do at least one a day and you can access all of my source files and header files here:  \href{https://github.com/neeldevsen/one-pricer-a-day}{\textbf{GitHub Repo}}
 \newpage
 \part{European Options} \newpage
@@ -71,25 +80,25 @@ The first option that I am going to be pricing is the European option using the 
 \href{https://github.com/neeldevsen/one-pricer-a-day/blob/main/day1-BlackScholes.cpp}{\textbf{source file}} \newline
 The \textbf{header file} (first listing) is on this link:
 \href{https://github.com/neeldevsen/one-pricer-a-day/blob/main/functions.hpp}{\textbf{header file}}
-\subsubsection{Risk-Neutral Measure}
-The Black-Scholes equation takes the assumption of the \textbf{risk-neutral pricing measure}
+\subsubsection{Geometric Brownian Motion}
+The Black-Scholes equation takes the assumption of \textbf{Geometric Brownian Motion}
 \begin{equation}
 	dS_t = rS_tdt + \sigma S_t dW_t
 	\label{risk-neutral}
 \end{equation} \cite{shreve2004}
-   \newline where $S_t$ is the price of the asset at a given time $t$, $dS_t$ is the infinitesimal change in the asset's price, $r$ is the risk-free rate of interest, $dt$ is the infinitesimal change in time, $\sigma$ is the implied volatility and $dW_t$ is the infinitesimal change in the \textbf{Wiener F
-	function}. The \textbf{Wiener function} is defined with the property:
+   \newline where $S_t$ is the price of the asset at a given time $t$, $dS_t$ is the infinitesimal change in the asset's price, $r$ is the risk-free rate of interest, $dt$ is the infinitesimal change in time, $\sigma$ is the implied volatility and $dW_t$ is the infinitesimal change in the \textbf{Wiener	function}. The \textbf{Wiener function} is defined with the property:
 \begin{equation}
-	W_T - W_t \sim \mathcal{N}(0,\sqrt{T-t})
+	W_T - W_t \sim \mathcal{N}(0,T-t)
+	\label{wiener}
 \end{equation}
-where $\mathcal{N(\mu, \sigma)}$ is the \textbf{normal distribution} with mean $\mu$ and standard-deviation $\sigma$.\cite{lalleyBrownian} \newline \newline
+where $\mathcal{N(\mu, \sigma^2)}$ is the \textbf{normal distribution} with mean $\mu$ and variance $\sigma^2$.\cite{lalleyBrownian} \newline \newline
 \subsubsection{Derivation of the Black-Scholes PDE}
 \textbf{Ito's Lemma} states that:
 \begin{equation}
 	df(t,S_t) = \frac{\partial f}{\partial t} dt + \frac {\partial f}{\partial S_t} dS_t + \frac{1}{2}\frac{\partial^2 f}{\partial S_t^2}(dS_t)^2
 	\label{ito}
 \end{equation}
-Substituting equation \ref{risk-neutral} for $dS_t$ we get:
+Substituting Equation \ref{risk-neutral} for $dS_t$ we get:
 \begin{equation}
 	\begin{aligned}
 		df(t,S_t) 
@@ -114,7 +123,7 @@ The\textbf{ Ito's multiplication rules} state that:
 	(dW_t)^2 &= dt  	\label{dWdW}
 \end{align}
 \newline 
-Substituting equations \ref{dtdt}, \ref{dtdW}, and \ref{dWdW} into equation 	\ref{derivationbspde} we get:
+Substituting Equations \ref{dtdt}, \ref{dtdW}, and \ref{dWdW} into Equation 	\ref{derivationbspde} we get:
 \begin{equation}
 	\begin{aligned}
 		df(t,S_t)  &= \frac{\partial f}{\partial t}dt
@@ -138,7 +147,7 @@ Define
 \begin{equation}
 	V(t,S)  \equiv f(t,S_t)
 \end{equation}
-Using the result from equation \ref{derivationbspde2}
+Using the result from Equation \ref{derivationbspde2}
 \begin{equation}
 	dV(t,S) = (\frac{\partial V}{\partial t} + rS \frac{\partial V}{\partial S} + 
 	\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2}) dt + \sigma S \frac{\partial V}{\partial S}dW_t
@@ -154,7 +163,7 @@ For an infinitesimal time step this becomes:
 \begin{equation}
 	d\Pi = dV - \Delta dS 
 \end{equation}
-Substituting equation \ref{dVgbm} for $dV$ and equation \ref{risk-neutral} for $dS$ we get. 
+Substituting Equation \ref{dVgbm} for $dV$ and Equation \ref{risk-neutral} for $dS$ we get. 
 \begin{equation}
 \begin{aligned}
 	d\Pi &= (\frac{\partial V}{\partial t} + rS \frac{\partial V}{\partial S} + 
@@ -164,7 +173,7 @@ Substituting equation \ref{dVgbm} for $dV$ and equation \ref{risk-neutral} for $
 \end{aligned}
 \label{dVgbm2}
 \end{equation}
-Since  $\Delta = \frac{\partial V}{\partial S}$ , equation \ref{dVgbm2} becomes:
+Since  $\Delta = \frac{\partial V}{\partial S}$ , Equation \ref{dVgbm2} becomes:
 \begin{equation}
 \begin{aligned}
 	d\Pi &= (\frac{\partial V}{\partial t} + rS \frac{\partial V}{\partial S} + 
@@ -181,7 +190,7 @@ The \textbf{no-arbitrage condition} in a \textbf{risk-free portfolio} is:
 	d\Pi = r\Pi dt
 	\label{riskfreearbritrage}
 \end{equation}
-Substituting this into equation \ref{dVgbm3} we get:
+Substituting this into Equation \ref{dVgbm3} we get:
 \begin{equation}
 \begin{aligned}
 	r\Pi dt &= (\frac{\partial V}{\partial t} + 
@@ -191,7 +200,7 @@ Substituting this into equation \ref{dVgbm3} we get:
 \end{aligned}
 \label{dVgbm4}
 \end{equation}
-Substituting equation \ref{portfolioDef} into equation \ref{dVgbm4} we get:
+Substituting Equation \ref{portfolioDef} into Equation \ref{dVgbm4} we get:
 \begin{equation}
 	\begin{aligned}
 		r(V - \Delta S)&= \frac{\partial V}{\partial t} + 
@@ -232,76 +241,117 @@ This gives us the final partial differential equation which is also the \textbf{
   \end{equation}
  \newline In C++ this can be implemented as:
   
- \begin{lstlisting}[style=cpp]
-#include <iostream>
-#include <cmath>
-#include <type_traits>
- 
-template <typename T>
-auto normalCDF(T x) -> std::common_type_t <double , T>
-{
-	using commonType = std::common_type_t<double, T>;
-	return static_cast<commonType>(0.5) * (static_cast<commonType>(1) + std::erf(x / std::sqrt(2.0)));
-}
- \end{lstlisting}
- The function we are creating is called \textbf{normalCDF}. This listing  uses the \textbf{cmath} header file in order to import \textbf{std::erf}. It also uses a function template with a type placeholder \textbf{T} so that we can use this function for any type given. In order to ensure that this function has at least a type \textbf{double} we use the header file \textbf{type traits} which allows us to specify that we want this function to be at least double in line 6 trailing return type. In line 8 we ensure that the \textbf{commonType} alias used amongst all the literals and variables in this function are also at least of type \textbf{double}. This function returns the result shown in equation \ref{eq:2.3} with a type of at least \textbf{double}. 
- \newpage
- Now to implement the function shown in equation \ref{eq:2.2} in C++ we use: 
- \begin{lstlisting}[style=cpp]
-#include "functions.hpp" // header file for normalCDF
- 	
-template <typename SType, typename KType, typename rType, typename sigmaType, typename tType>
-auto blackScholesCall(SType S, KType K, rType r, sigmaType sigma, tType t) -> std::common_type_t<double, SType, KType, rType, sigmaType, tType>
-{
-	using commonType = std::common_type_t<double, SType, KType, rType, sigmaType, tType>;
-	auto S_new {static_cast<commonType>(S)};
-	auto K_new {static_cast<commonType>(K)};
-	auto r_new {static_cast<commonType>(r)};
-	auto sigma_new {static_cast<commonType>(sigma)};
-	auto t_new {static_cast<commonType>(t)};
-	auto sqrt_t_new {std::sqrt(t_new)};
-	
-	auto d1 {(std::log(S_new / K_new) + (r_new + (static_cast<commonType>(0.5) * sigma_new * sigma_new) * t_new) / (sigma_new * sqrt_t_new)};
-	auto d2 {d1 - sigma_new * sqrt_t_new};
-	
-	auto C {S_new * normalCDF(d1) - K_new * std::exp(-r_new * t_new) * normalCDF(d2)};
-	return C;
-}
+\begin{listing}[ht]
+	\begin{minted}{cpp}
+	#include <cmath>
+	#include <type_traits>
+		
+	template <typename T>
+	auto normalCDF(T x) -> std::common_type_t<double, T>
+	{
+		using commonType = std::common_type_t<double, T>;
+			
+		return static_cast<commonType>(0.5) * (static_cast<commonType>(1) + std::erf(x / std::sqrt(2.0)));
+	}
+	\end{minted}
+	\caption{Normal cumulative distribution function}
+	\label{lst:normal-cdf}
+\end{listing}
 
- \end{lstlisting}
- The function in this listing is called \textbf{blackScholesCall}. This listing again uses the same header files and the same principles as the one before and converts every thing into a \textbf{commonType} of at least type \textbf{double}. The formula for $d_1$ is shown in line 12 and the formula for $d_2$ is shown in line 13.  Finally the result in equation \ref{eq:2.2} is shown in line 16 using the previously defined function \textbf{normalCDF}. The function returns the value of the \textbf{call option} with at least type \textbf{double}. 
+
+This function is defined in a header file called \href{https://github.com/neeldevsen/pricingengines/blob/main/I%3A%20European%20Options/Headers/functions.hpp}{\textbf{functions.hpp}} and the mechanism of this function is basically to return the result from Equation \ref{eq:2.2}. Using the \textbf{cmath} header I compute the error function using \textbf{std::erf()}. This function returns a value with at least a type \textbf{double} depending on what type \textbf{x} is.
  \newpage
+ The next listing  is a \textbf{struct} that is used throughout each engine that stores all of the data required to price a \textbf{Black Scholes option}. This struct is also in a header file called \href{https://github.com/neeldevsen/pricingengines/blob/main/I%3A%20European%20Options/Headers/black_scholes_struct.hpp}{\textbf{black-scholes-struct.hpp}}. 
+ \begin{listing}[ht]
+ 	\begin{minted}{cpp}
+ 		#ifndef GBMOPTIONS
+ 		#define GBMOPTIONS
+ 		#include <type_traits>
+ 		
+ 		template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+ 		struct OptionDataBS
+ 		{
+ 			using CommonType = std::common_type_t <double, S_t, K_t, r_t, sigma_t, T_t>;
+ 			CommonType spot {};
+ 			CommonType strike {};
+ 			CommonType rate {};
+ 			CommonType volatility {};
+ 			CommonType maturity {};
+ 		};
+ 		
+ 		template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+ 		OptionDataBS(S_t, K_t, r_t, sigma_t, T_t) -> OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>;
+ 		#endif
+ 	\end{minted}
+ 	\caption{Black Scholes Option Data Struct}
+ 	\label{lst:bsstruct}
+ \end{listing}
+ \newline
+ Lines 1,2 and 18 are all part of a\textbf{ header guard}. The struct \textbf{OptionDataBS} uses a template giving the opportunity for all of the data to have unique data types when passed into the struct. Line 8 creates a \textbf{type alias} which takes the common type of all of these parameters and sets it to something of at least type double.  These types are then used to initiate the \textbf{spot, strike, rate, volatility} and \textbf{maturity} of this option.  Line 16-17 is just a \textbf{class argument template deduction guide} so the compiler knows how to deduce the types of the arguments passed
+\newline
+\newline
+Now to implement the function shown in Equation \ref{eq:2.2} in C++ we will use both the function and struct defined above: 
+ \newpage
+\begin{listing}[ht]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <type_traits>
+		#include "../Headers/functions.hpp"
+		#include "../Headers/black_scholes_struct.hpp"
+		
+		template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+		auto blackScholesCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data) -> decltype(data.spot)
+		{
+			using CommonType = decltype(data.spot);
+			auto sqrt_maturity {std::sqrt(data.maturity)};
+			
+			auto d1 {(std::log(data.spot / data.strike) + (data.rate + (static_cast<CommonType>(0.5) * data.volatility * data.volatility)) * (data.maturity))/ (data.volatility * sqrt_maturity)};
+			auto d2 {d1 - data.volatility * sqrt_maturity};
+			
+			auto C {data.spot * normalCDF(d1) - data.strike * std::exp(-data.rate * data.maturity) * normalCDF(d2)};
+			return C;
+		}
+	\end{minted}
+	\caption{Black Scholes Call using Closed Form Solution}
+	\label{blackscholesCFcall}
+\end{listing}
+ The function in this listing is called \textbf{blackScholesCall}. This listing passes a reference to the struct \textbf{OptionDataBS} called \textbf{data} (since copying a struct is expensive)  The return type of this function is deduced to be \textbf{commonType} which is also teh type of \textbf{data.spot} (hence I used \textbf{decltype}). The formula for $d_1$ is shown in line 12 and the formula for $d_2$ is shown in line 13.  Finally the result in Equation \ref{eq:2.2} is shown in line 15 using the previously defined function \textbf{normalCDF}. The function returns the value of the \textbf{call option} with at least type \textbf{double}. 
+\newpage
 \subsubsection{Closed-Form Solution for European Put Options}
- The closed-form solution for the Black-Scholes equation fora put option is: 
+ The closed-form solution for the Black-Scholes equation fo ra put option is: 
 \begin{equation}
 	P(t,S) = Ke^{-r(T-t)}\Phi(-d_2) - S\Phi(-d_1)
 	\label{eq:2.4} 
 \end{equation}
-using the same definitions of $d_1$ and $d_2$ in \ref{eq:2.2} \cite{haugh2016BlackScholes} \newline \newline 
+using the same definitions of $d_1$ and $d_2$ in Equation \ref{eq:2.2} \cite{haugh2016BlackScholes} \newline \newline 
 The implementation of this in C++ is:
+\begin{listing}[ht]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <type_traits>
+		#include "../Headers/functions.hpp"
+		#include "../Headers/black_scholes_struct.hpp"
+		
+		template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+		auto blackScholesPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data) -> decltype(data.spot)
+		{
+			using CommonType = decltype(data.spot);
+			auto sqrt_maturity {std::sqrt(data.maturity)};
+			
+			auto d1 {(std::log(data.spot / data.strike) + (data.rate + (static_cast<CommonType>(0.5) * data.volatility * data.volatility)) * (data.maturity)) / (data.volatility * sqrt_maturity)};
+			auto d2 {d1 - data.volatility * sqrt_maturity};
+			
+			auto P  {data.strike * std::exp(-data.rate * data.maturity) * normalCDF(-d2) - data.spot * normalCDF(-d1)};
+			return P;
+		}
+		
+	\end{minted}
+	\caption{Black Scholes Put using Closed Form Solution}
+	\label{blackscholesCFput}
+\end{listing}
 
- \begin{lstlisting}[style=cpp]
-#include "functions.hpp" // header file for normalCDF
 
-template <typename SType, typename KType, typename rType, typename sigmaType, typename tType>
-auto blackScholesPut(SType S, KType K, rType r, sigmaType sigma, tType t) -> std::common_type_t<double, SType, KType, rType, sigmaType, tType>
-{
-	using commonType = std::common_type_t<double, SType, KType, rType, sigmaType, tType>;
-	auto S_new {static_cast<commonType>(S)};
-	auto K_new {static_cast<commonType>(K)};
-	auto r_new {static_cast<commonType>(r)};
-	auto sigma_new {static_cast<commonType>(sigma)};
-	auto t_new {static_cast<commonType>(t)};
-	auto sqrt_t_new {std::sqrt(t_new)};
-	
-	auto d1 {(std::log(S_new / K_new) + (r_new + (static_cast<commonType>(0.5) * sigma_new * sigma_new) * sqrt_t_new) / (sigma_new * sqrt_t_new)};
-	auto d2 {d1 - sigma_new * std::sqrt(t_new)};
-	
-	auto P {K_new * std::exp(-r_new * t_new) * normalCDF(-d2) - S_new * normalCDF(-d1)};
-	return P;
-}
-\end{lstlisting}
- The function in this listing is called \textbf{blackScholesPut}. This listing is almost identical to the one for \textbf{blackScholesCall}. The formula for $d_1$ is again shown in line 12 and the formula for $d_2$ is shown in line 13.  Finally the result in equation \ref{eq:2.4} is computed in line 16 (stored as \textbf{P}) using the function \textbf{normalCDF}. The function returns the value of the \textbf{put option} with at least type \textbf{double}. 
+ The function in this listing is called \textbf{blackScholesPut}. This listing is almost identical to the one for \textbf{blackScholesCall}. The formula for $d_1$ is again shown in line 12 and the formula for $d_2$ is shown in line 13.  Finally the result in Equation \ref{eq:2.4} is computed in line 15 (stored as \textbf{P}) using the function \textbf{normalCDF}. The function returns the value of the \textbf{put option} with at least type \textbf{double}. 
 \newpage
 \subsection{Black-76 PDE}
 
@@ -318,7 +368,7 @@ The modelling assumptions are that the futures of forward price process is model
 \end{equation}
 
 where $F_t$ is the price of a future or a forward at a given time, $dF_t$ is the infinitesimal change of the price of a future of a forward, $\sigma$ is implied volatility and $dW_t$ is the infinitesimal change in the \textbf{Wiener function}.\cite{black1976CommodityContracts} \newline\newline
-Substituting equation \ref{assumptionBS76} into \textbf{Ito's Lemma} \ref{ito}
+Substituting Equation \ref{assumptionBS76} into \textbf{Ito's Lemma} \ref{ito}
 
 \begin{equation}
 	\begin{aligned}
@@ -338,7 +388,7 @@ Substituting equation \ref{assumptionBS76} into \textbf{Ito's Lemma} \ref{ito}
 \end{equation}
 
 
-Substituting equations \ref{dWdW} into equation 	\ref{derivationbs76pde} we get:
+Substituting Equations \ref{dWdW} into Equation 	\ref{derivationbs76pde} we get:
 \begin{equation}
 	\begin{aligned}
 		df(t,S_t)  &= \frac{\partial f}{\partial t}dt
@@ -356,7 +406,7 @@ Define
 \begin{equation}
 	V(t,S)  \equiv f(t,S_t)
 \end{equation}
-Using the result from equation \ref{derivationbs76pde2}
+Using the result from Equation \ref{derivationbs76pde2}
 \begin{equation}
 	dV(t,S) = (\frac{\partial V}{\partial t} +
 	\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial F^2}) dt + \sigma F \frac{\partial V}{\partial F}dW_t
@@ -372,7 +422,7 @@ For an infinitesimal time step, the value of the future increases by $dF$ which 
 \begin{equation}
 	d\Pi = dV - \Delta dF 
 \end{equation} where $\Delta = \frac{\partial V}{\partial F}$
-Substituting equation \ref{dVgbm76} for $dV$ and equation \ref{assumptionBS76} for $dF$ we get. 
+Substituting Equation \ref{dVgbm76} for $dV$ and Equation \ref{assumptionBS76} for $dF$ we get. 
 \begin{equation}
 	\begin{aligned}
 		d\Pi &= (\frac{\partial V}{\partial t} +
@@ -382,7 +432,7 @@ Substituting equation \ref{dVgbm76} for $dV$ and equation \ref{assumptionBS76} f
 	\end{aligned}
 	\label{dVgbm276}
 \end{equation}
-Since  $\Delta = \frac{\partial V}{\partial F}$ , equation \ref{dVgbm276} becomes:
+Since  $\Delta = \frac{\partial V}{\partial F}$ , Equation \ref{dVgbm276} becomes:
 \begin{equation}
 	\begin{aligned}
 		d\Pi &= (\frac{\partial V}{\partial t} +
@@ -392,7 +442,7 @@ Since  $\Delta = \frac{\partial V}{\partial F}$ , equation \ref{dVgbm276} become
 	\end{aligned}
 	\label{dVgbm763}
 \end{equation}
-Using equation \ref{riskfreearbritrage} and substituting this into equation \ref{dVgbm763} we get:
+Using Equation \ref{riskfreearbritrage} and substituting this into Equation \ref{dVgbm763} we get:
 \begin{equation}
 	\begin{aligned}
 		r\Pi dt &= (\frac{\partial V}{\partial t} +
@@ -402,7 +452,7 @@ Using equation \ref{riskfreearbritrage} and substituting this into equation \ref
 	\end{aligned}
 	\label{dVgbm476}
 \end{equation}
-Substituting equation \ref{portfolioDef76} into equation \ref{dVgbm476} we get:
+Substituting Equation \ref{portfolioDef76} into Equation \ref{dVgbm476} we get:
 \begin{equation}
 		rV = \frac{\partial V}{\partial t} +
 		\frac{1}{2}\sigma^2F^2\frac{\partial^2 V}{\partial F^2}  \\ 
@@ -415,7 +465,39 @@ Which finally leads to the equation:
 Which is also known as the \textbf{Black-76 Equation}
 
 \newpage
+\subsubsection{Implementation of the Black-76 Struct}
+Just like the Black-Scholes equation, the \textbf{Black-76} equation has its own struct since it uses \textbf{futures/forwards} instead of \textbf{stocks}. I will need to save the initial value of the future instead of a stock. 
 
+\begin{listing}[ht]
+	\begin{minted}{cpp}
+		#ifndef BLACK76
+		#define BLACK76
+		#include <type_traits>
+		
+		template <typename F_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+		
+		struct OptionDataB76
+		{
+			using commonType = std::common_type_t <double, F_t, K_t, r_t, sigma_t, T_t>;
+			commonType future {};
+			commonType strike {};
+			commonType rate {};
+			commonType volatility {};
+			commonType maturity {};
+		};
+		
+		template <typename F_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+		OptionDataB76(F_t, K_t, r_t, sigma_t, T_t) -> OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>;
+		
+		#endif
+		
+		
+	\end{minted}
+	\caption{Black 76 Option Data Struct}
+	\label{black76struct}
+\end{listing}
+
+This struct \textbf{OptionDataB76} is almost the same as the struct \textbf{OptionDataBS} except it passes a future instead of a stock. This means the type placeholder also changed from \textbf{\texttt{S\_t}} for stocks to \textbf{\texttt{F\_t}} for futures. The first data member the struct saves is \textbf{future} instead of \textbf{spot}. This struct is saved on the header: \href{https://github.com/neeldevsen/pricingengines/blob/main/I%3A%20European%20Options/Headers/black76_structs.hpp}{\textbf{black76-structs.hpp}}
 \subsubsection{Black-76 Formula for Call Options}
 The Black-76 Formula for Call options is:
 \begin{equation}
@@ -427,28 +509,31 @@ The Black-76 Formula for Call options is:
 \label{eq:2.9}
 \end{equation} \cite{black1976CommodityContracts}
 The implementation in C++ is:
-\begin{lstlisting}[style=cpp]
-#include "functions.hpp" // header file for normalCDF
-	
-template <typename FType, typename KType, typename rType, typename sigmaType, typename tType>
-auto black76Call(FType F, KType K, rType r, sigmaType sigma, tType t) -> std::common_type_t<double, FType, KType, rType, sigmaType, tType>
-{
-	using commonType = std::common_type_t<double, FType, KType, rType, sigmaType, tType>;
-	auto F_new {static_cast<commonType>(F)};
-	auto K_new {static_cast<commonType>(K)};
-	auto r_new {static_cast<commonType>(r)};
-	auto sigma_new {static_cast<commonType>(sigma)};
-	auto t_new {static_cast<commonType>(t)};
-	auto sqrt_t_new {std::sqrt(t_new)};
-	
-	auto d1 {(std::log(F_new / K_new) + (static_cast<commonType>(0.5) * sigma_new * sigma_new) * t_new ) / (sigma_new * sqrt_t_new)};
-	auto d2 {d1 - sigma_new * sqrt_t_new};
-	
-	auto C {(std::exp(-r_new * t_new)) * (F_new * normalCDF(d1) - K_new * normalCDF(d2))};
-	return C;
-}
-\end{lstlisting}
- $d_1$ is calculated in line 13, $d_2$ is calculated in line 14 and finally equation \ref{eq:2.9} is computed in line 16 (stored as \textbf{C}) and returned in line 17.
+\begin{listing}[ht]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <type_traits>
+		#include "../Headers/functions.hpp"
+		#include "../Headers/black76_structs.hpp"
+		
+		template <typename F_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+		auto black76Call(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data) -> decltype(data.future)
+		{
+			using commonType = decltype(data.future);
+			auto sqrt_maturity {std::sqrt(data.maturity)};
+			
+			auto d1 {(std::log(data.future / data.strike) + (static_cast<commonType>(0.5) * data.volatility * data.volatility) * data.maturity ) / (data.volatility* sqrt_maturity)};
+			auto d2 {d1 - data.volatility * sqrt_maturity};
+			
+			auto C {(std::exp(-data.rate * data.maturity)) * (data.future * normalCDF(d1) - data.strike * normalCDF(d2))};
+			return C;
+		}
+	\end{minted}
+	\caption{Black-76 Call using Closed Form Solution}
+	\label{lst:b76cF}
+\end{listing}
+\newline
+ $d_1$ is calculated in line 12, $d_2$ is calculated in line 13 and finally Equation \ref{eq:2.9} is computed in line 15 (stored as \textbf{C}) and returned in line 16.
 \newpage
 \subsubsection{Black-76 Formula for Put Options}
 The Black-76 Formula for Call options is:
@@ -461,28 +546,31 @@ The Black-76 Formula for Call options is:
 \end{aligned} 
 \end{equation} \cite{black1976CommodityContracts}
 The implementation in C++ is:
-\begin{lstlisting}[style=cpp]
-#include "functions.hpp" // header file for normalCDF
-	
-template <typename FType, typename KType, typename rType, typename sigmaType, typename tType>
-auto black76Put(FType F, KType K, rType r, sigmaType sigma, tType t) -> std::common_type_t<double, FType, KType, rType, sigmaType, tType>
-{
-	using commonType = std::common_type_t<double, FType, KType, rType, sigmaType, tType>;
-	auto F_new {static_cast<commonType>(F)};
-	auto K_new {static_cast<commonType>(K)};
-	auto r_new {static_cast<commonType>(r)};
-	auto sigma_new {static_cast<commonType>(sigma)};
-	auto t_new {static_cast<commonType>(t)};
-	auto sqrt_t_new {std::sqrt(t_new)};
-	
-	auto d1 {(std::log(F_new / K_new) + (static_cast<commonType>(0.5) * sigma_new * sigma_new) * t_new ) / (sigma_new * sqrt_t_new)};
-	auto d2 {d1 - sigma_new * sqrt_t_new};
-	
-	auto P {std::exp(-r_new * t_new) * (K_new * normalCDF(-d2) - (F_new * normalCDF(-d1)))};
-	return P;
-}
-\end{lstlisting}
-$d_1$ is calculated in line 13, $d_2$ is calculated in line 14 and finally equation \ref{eq:2.10} is computed in line 16 (stored as \textbf{P}) and returned in line 17.
+\begin{listing}[ht]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <type_traits>
+		#include "../Headers/functions.hpp"
+		#include "../Headers/black76_structs.hpp"
+		
+		template <typename F_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+		auto black76Put(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data) -> decltype(data.future)
+		{
+			using commonType = decltype(data.future);
+			auto sqrt_maturity {std::sqrt(data.maturity)};
+			
+			auto d1 {(std::log(data.future / data.strike) + (static_cast<commonType>(0.5) * data.volatility * data.volatility) * data.maturity ) / (data.volatility* sqrt_maturity)};
+			auto d2 {d1 - data.volatility * sqrt_maturity};
+			
+			auto P {std::exp(-data.rate * data.maturity) * (data.strike * normalCDF(-d2) - (data.future * normalCDF(-d1)))};
+			return P;
+		}
+	\end{minted}
+	\caption{Black-76 Call using Closed Form Solution}
+	\label{lst:b76putcF}
+\end{listing}
+\newline
+$d_1$ is calculated in line 12, $d_2$ is calculated in line 13 and finally Equation \ref{eq:2.10} is computed in line 15 (stored as \textbf{P}) and returned in line 16.
 \newpage
 \subsection{Merton's Dividend-Adjusted Black-Scholes}
 A \textbf{dividend} is cash payment from companies to shareholders for ownership in their stock. The key property with dividends is that each time a dividend is given to the shareholder, the stock price per share drops by that dividend amount and that the dividend grows as the stock grows. 
@@ -500,8 +588,8 @@ Let's define the dividend yield to be $q$.  For each infinitesimal step in the s
 	\end{aligned}
 	\label{mertonGBM}
 \end{equation}
-where the other variables defined here are the same defined in equation \ref{risk-neutral}. The derivation here is again almost identical to that of the \textbf{Black-Scholes equation}. 
-Substituting equation \ref{mertonGBM} for $dS_t$ we get:
+where the other variables defined here are the same defined in Equation \ref{risk-neutral}. The derivation here is again almost identical to that of the \textbf{Black-Scholes equation}. 
+Substituting Equation \ref{mertonGBM} for $dS_t$ we get:
 \begin{equation*}
 df(t,S_t) = \frac{\partial f}{\partial t} dt 
 		+ \frac{\partial f}{\partial S_t}
@@ -519,7 +607,7 @@ df(t,S_t) = \frac{\partial f}{\partial t} dt
 	\label{derivationbspdemerton}
 	\end{equation}
 
-Substituting equations \ref{dtdt}, \ref{dtdW}, and \ref{dWdW} into equation 	\ref{derivationbspdemerton} we get:
+Substituting Equations \ref{dtdt}, \ref{dtdW}, and \ref{dWdW} into Equation 	\ref{derivationbspdemerton} we get:
 \begin{equation}
 	\begin{aligned}
 		df(t,S_t)  &= \frac{\partial f}{\partial t}dt
@@ -543,7 +631,7 @@ Define
 \begin{equation}
 	V(t,S)  \equiv f(t,S_t)
 \end{equation}
-Using the result from equation \ref{derivationbspde2merton}
+Using the result from Equation \ref{derivationbspde2merton}
 \begin{equation}
 	dV(t,S) = (\frac{\partial V}{\partial t} + (r-q)S \frac{\partial V}{\partial S} + 
 	\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2}) dt + \sigma S \frac{\partial V}{\partial S}dW_t
@@ -559,7 +647,7 @@ For an infinitesimal time step, since we hedge the option by shorting the stock,
 \begin{equation}
 	d\Pi = dV - \Delta dS -\Delta qS dt
 \end{equation}
-Substituting equation \ref{dVgbmmerton} for $dV$ and equation \ref{risk-neutral} for $dS$ we get. 
+Substituting Equation \ref{dVgbmmerton} for $dV$ and Equation \ref{risk-neutral} for $dS$ we get. 
 \begin{equation}
 	\begin{aligned}
 		d\Pi &= (\frac{\partial V}{\partial t} + (r-q)S \frac{\partial V}{\partial S} + 
@@ -569,7 +657,7 @@ Substituting equation \ref{dVgbmmerton} for $dV$ and equation \ref{risk-neutral}
 	\end{aligned}
 	\label{dVgbm2merton}
 \end{equation}
-Since  $\Delta = \frac{\partial V}{\partial S}$ , equation \ref{dVgbm2merton} becomes:
+Since  $\Delta = \frac{\partial V}{\partial S}$ , Equation \ref{dVgbm2merton} becomes:
 \begin{equation}
 	\begin{aligned}
 		d\Pi &= (\frac{\partial V}{\partial t} + (r-q)S \frac{\partial V}{\partial S} + 
@@ -581,7 +669,7 @@ Since  $\Delta = \frac{\partial V}{\partial S}$ , equation \ref{dVgbm2merton} be
 	\end{aligned}
 	\label{dVgbm3merton}
 \end{equation}
-Substituting equation \ref{riskfreearbritrage} into equation \ref{dVgbm3merton} we get:
+Substituting Equation \ref{riskfreearbritrage} intoEquation \ref{dVgbm3merton} we get:
 \begin{equation}
 	\begin{aligned}
 		r\Pi dt &= (\frac{\partial V}{\partial t} + 
@@ -591,7 +679,7 @@ Substituting equation \ref{riskfreearbritrage} into equation \ref{dVgbm3merton} 
 	\end{aligned}
 	\label{dVgbm4merton}
 \end{equation}
-Substituting equation \ref{portfolioDefmerton} into equation \ref{dVgbm4merton} we get:
+Substituting Equation \ref{portfolioDefmerton} into Equation \ref{dVgbm4merton} we get:
 \begin{equation}
 	\begin{aligned}
 		r(V - \Delta S)&= \frac{\partial V}{\partial t} + 
@@ -609,7 +697,36 @@ This finally gives us the equation:
 \end{equation}
 which is the \textbf{Black-Scholes PDE with Merton's dividend adjustment}.  \cite{buchanan2014ExtensionsBS} \newline \newline
 This PDE uses the same variables as the \textbf{Black-Scholes PDE} with the only addition being the \textbf{dividend yield} $q$. $q$ affects the equaton by modifying $rS\frac{\partial V}{\partial S}$ (Black-Scholes PDE ) into the new $(r-q)S\frac{\partial V}{\partial S}$
-\newpage
+\subsubsection{Implementation of the Black-Scholes Merton Struct}
+
+\begin{listing}[H]
+	\begin{minted}{cpp}
+		#include <type_traits>
+		#ifndef MERTONSTRUCTS
+		#define MERTONSTRUCTS
+		
+		template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>
+		
+		struct OptionDataMerton
+		{
+			using CommonType = std::common_type_t <double, S_t, K_t, r_t, q_t, sigma_t, T_t>;
+			CommonType spot {};
+			CommonType strike {};
+			CommonType rate {};
+			CommonType dividend {};
+			CommonType volatility {};
+			CommonType maturity {};
+		};
+		
+		template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>
+		OptionDataMerton(S_t, K_t, r_t, q_t, sigma_t, T_t) -> OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>;
+		#endif
+	\end{minted}
+\caption{Black--Scholes Merton Option Data Struct}
+\label{lst:merton-struct}
+\end{listing}
+\FloatBarrier
+This struct \textbf{OptionDataMerton} is very similar to both of the ones above, however we now also have the dividend member. The type placeholder for the dividend is \textbf{\texttt{q\_t}} and it is initialised right after rate. This struct can be found in the header file: \href{https://github.com/neeldevsen/pricingengines/blob/main/I%3A%20European%20Options/Headers/merton_struct.hpp}{\textbf{merton-struct.hpp}}
 \subsubsection{Closed-Form Solution to Call Options with Dividends}
  \begin{equation}
 	\begin{aligned}
@@ -619,31 +736,35 @@ This PDE uses the same variables as the \textbf{Black-Scholes PDE} with the only
 	\end{aligned}
 	\label{eq:2.48}
 \end{equation} \cite{buchanan2014ExtensionsBS}
-The only thing that changed from equation \ref{eq:2.2} is the $d_1$ term has a $-q$ term as well as the fact that in $C(t,S)$, the $S$ term has an $e^{-q(T-t)}$ term multiplied to it.
+The only thing that changed from Equation \ref{eq:2.2} is the $d_1$ term has a $-q$ term as well as the fact that in $C(t,S)$, the $S$ term has an $e^{-q(T-t)}$ term multiplied to it.
 \newline \newline
 Implementation in C++
-\begin{lstlisting}[style=cpp]
-#include "functions.hpp" // header file for normalCDF
-template <typename SType, typename KType, typename rType, typename qType, typename sigmaType, typename tType>
-auto bsDividendCall(SType S, KType K, rType r, qType q, sigmaType sigma, tType t) -> std::common_type_t<double, SType, KType, rType, qType, sigmaType, tType>
-{
-	using commonType = std::common_type_t<double, SType, KType, rType, qType, sigmaType, tType>;
-	auto S_new {static_cast<commonType>(S)};
-	auto K_new {static_cast<commonType>(K)};
-	auto r_new {static_cast<commonType>(r)};
-	auto q_new {static_cast<commonType>(q)};
-	auto sigma_new {static_cast<commonType>(sigma)};
-	auto t_new {static_cast<commonType>(t)};
-	auto sqrt_t_new {std::sqrt(t_new)};
-	
-	auto d1 {(std::log(S_new / K_new) + (r_new - q_new + (static_cast<commonType>(0.5) * sigma_new * sigma_new) ) * t_new) / (sigma_new * sqrt_t_new)};
-	auto d2 {d1 - sigma_new * sqrt_t_new};
-	
-	auto C {S_new * std::exp(-q_new * t_new) * normalCDF(d1) - K_new * std::exp(-r_new * t_new) * normalCDF(d2)};
-	return C; }
-	\end{lstlisting}
-This function is similar to the call function made in day 1, however the function \textbf{bsDividendCall} also has the parameter \textbf{q}. This is again converted using type conversion with all the other parameters. The addition of \textbf{q} affects line 14 with the $(r-q)$ term instead of $r$. The addition also affects line 17 where the value of $d_1$ is affected with $Se^{-q(T-t)}$ versus $S$. This function calculates the formula in \ref{eq:2.48} and stores it as \textbf{C} with a type of at least \textbf{double} and then returns it in line 18.
-\newpage
+\begin{listing}[ht]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <type_traits>
+		#include "../Headers/functions.hpp"
+		#include "../Headers/merton_struct.hpp"
+		
+		template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>
+		auto bsDividendCall(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>& data) -> decltype(data.spot)
+		{
+			using CommonType = decltype(data.spot);
+			auto sqrt_maturity {std::sqrt(data.maturity)};
+			
+			auto d1 {(std::log(data.spot / data.strike) + (data.rate  - data.dividend + (static_cast<CommonType>(0.5) * data.volatility * data.volatility)) * (data.maturity))/ (data.volatility * sqrt_maturity)};
+			auto d2 {d1 - data.volatility * sqrt_maturity};
+			
+			auto C {data.spot * std::exp(-data.dividend * data.maturity) * normalCDF(d1) - data.strike * std::exp(-data.rate * data.maturity) * normalCDF(d2)};
+			return C;
+		}
+	\end{minted}
+	\caption{Black-76 Call using Closed Form Solution}
+	\label{lst:mertoncall}
+\end{listing}
+
+This function is similar to the call function made in day 1, however the struct \textbf{OptionDataMerton} also has the data member \textbf{dividend}.  The addition of \textbf{data.dividend} affects line 12 with the $(r-q)$ term instead of $r$. The addition also affects line 15 where the value of $S$ is affected with $Se^{-q(T-t)}$ versus $S$. This function evaluates Equation \ref{eq:2.48} and stores it as \textbf{C} with a type of at least \textbf{double} and then returns it in line 16.
+
 \subsubsection{Closed-Form Solution to Put Options with Dividends}
 \begin{equation}
 	\begin{aligned}
@@ -653,151 +774,1110 @@ This function is similar to the call function made in day 1, however the functio
 	\end{aligned}
 	\label{eq:2.49}
 \end{equation} \cite{buchanan2014ExtensionsBS}
-Again just like with the call, the only changes from equation \ref{eq:2.4} is the fact that the $d_1$ term has a $-q$ term as well as the fact that in $P(t,S)$, the $S$ term has an $e^{-q(T-t)}$ term multiplied to it.
+Again just like with the call, the only changes from Equation \ref{eq:2.4} is the fact that the $d_1$ term has a $-q$ term as well as the fact that in $P(t,S)$, the $S$ term has an $e^{-q(T-t)}$ term multiplied to it.
 \newline \newline
 Implementation in C++
-\begin{lstlisting}[style=cpp]
-#include "functions.hpp" // header file for normalCDF
-template <typename SType, typename KType, typename rType, typename qType, typename sigmaType, typename tType>
-auto bsDividendPut(SType S, KType K, rType r, qType q, sigmaType sigma, tType t) -> std::common_type_t<double, SType, KType, rType, qType, sigmaType, tType>
-{
-	using commonType = std::common_type_t<double, SType, KType, rType, qType, sigmaType, tType>;
-	auto S_new {static_cast<commonType>(S)};
-	auto K_new {static_cast<commonType>(K)};
-	auto r_new {static_cast<commonType>(r)};
-	auto q_new {static_cast<commonType>(q)};
-	auto sigma_new {static_cast<commonType>(sigma)};
-	auto t_new {static_cast<commonType>(t)};
-	auto sqrt_t_new {std::sqrt(t_new)};
-	
-	auto d1 {(std::log(S_new / K_new) + (r_new - q_new + (static_cast<commonType>(0.5) * sigma_new * sigma_new) ) * t_new) / (sigma_new * sqrt_t_new)};
-	auto d2 {d1 - sigma_new * sqrt_t_new};
-	
-	auto P {K_new * std::exp(-r_new * t_new) * normalCDF(-d2) - S_new * std::exp(-q_new * t_new) * normalCDF(-d1)};
-	return P; 
-}
-\end{lstlisting}
-Function got the same changes as in the previous listing above, where it calculates $d_1$ in line 14, $d_2$ in line 15 and uses the fomula \ref{eq:2.49}  in line 17 and stores it as variable \textbf{P} and then returns it in line 18.
-\subsection{Garman-Kohlhagen FX Option Pricing}
-\subsubsection{Derivation of Garman-Kohlhagen FX  Black-Scholes}
-Let's define the dividend yield to be $q$.  For each infinitesimal step in the stock price $S_t$ we pay a dividend of value $qSdt$. Putting this into the adjusted \textbf{geometric Brownian motion} give us:
+\begin{listing}[ht]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <type_traits>
+		#include "../Headers/functions.hpp"
+		#include "../Headers/merton_struct.hpp"
+		
+		template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>
+		auto bsDividendPut(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>& data) -> decltype(data.spot)
+		{
+			using CommonType = decltype(data.spot);
+			auto sqrt_maturity {std::sqrt(data.maturity)};
+			
+			auto d1 {(std::log(data.spot / data.strike) + (data.rate - data.dividend + (static_cast<CommonType>(0.5) * data.volatility * data.volatility)) * (data.maturity)) / (data.volatility * sqrt_maturity)};
+			auto d2 {d1 - data.volatility * sqrt_maturity};
+			
+			auto P  {data.strike * std::exp(-data.rate * data.maturity) * normalCDF(-d2) - data.spot * std::exp(-data.dividend * data.maturity) * normalCDF(-d1)};
+			return P;
+		}
+	\end{minted}
+	\caption{Black-76 Call using Closed Form Solution}
+	\label{lst:mertonput}
+\end{listing}
+\FloatBarrier
+Function got the same changes as in listing \ref{lst:mertoncall} where it calculates $d_1$ in line 12, $d_2$ in line 13 and computes Equation \ref{eq:2.49}  in line 15 and returns it in line 18.
+
+\newpage
+\section{Monte Carlo Simulations}
+\subsection{Monte Carlo Simulation with the GBM Assumption}
+The source file can be found on my \href{https://github.com/neeldevsen/pricingengines/blob/main/I%3A%20European%20Options/02_Monte_Carlo/2.1_monte_carlo_simulation_BS.cpp}{\textbf{GitHub}}
+\subsubsection{Derivation of the value of a  Stock}
+First we will use the \textbf{Geometric Brownian Motion} assumption defined in Equation \ref{risk-neutral}
+\begin{equation*} 
+	\begin{aligned}
+		dS_t &= rS_t\,dt + \sigma S_t\,dW_t \\
+		\frac{dS_t}{S_t} &= r\,dt + \sigma\,dW_t
+	\end{aligned}
+	\label{eq:gbm-sde}
+\end{equation*}
+Define: 
+\begin{equation}
+	X_t = \ln(S_t)
+	\label{eq:log-stock-definition}
+\end{equation}
+Using \textbf{Ito's Lemma} we can represent $dX_t$ in terms of $dS_t$ like this: 
+\begin{equation*}
+		dX_t = \frac{d X_t}{d S_t}\,dS_t + \frac{1}{2}\frac{d^2 X_t}{d S_t^2}(dS_t)^2 
+\end{equation*}
+Since $\frac{d X_t}{d S_t} = \frac{1}{S_t}$ and $\frac{d^2 X_t}{d S_t^2} = -\frac{1}{(S_t)^2}$. Substituting this in the previous equation we get:
 \begin{equation}
 	\begin{aligned}
-		dS_t &= r_d S_tdt + \sigma S_t dW_t - r_f S_tdt \\
-		&= (r_d- r_f)S_tdt + \sigma S_t dW_t 
-	\end{aligned}
-	\label{mertonGBM}
+		dX_t
+		&= \frac{1}{S_t}\left(rS_t\,dt+\sigma S_t\,dW_t\right)
+		-\frac{1}{2S_t^2}
+		\left(rS_t\,dt+\sigma S_t\,dW_t\right)^2 \\
+		dX_t &= r\,dt+\sigma\,dW_t
+		-\frac{1}{2S_t^2}
+		\left(
+		r^2S_t^2(dt)^2
+		+2r\sigma S_t^2\,dt\,dW_t
+		+\sigma^2S_t^2(dW_t)^2
+		\right) 
+ 	\end{aligned}
 \end{equation}
-where the other variables defined here are the same defined in equation \ref{risk-neutral}. The derivation here is again almost identical to that of the \textbf{Black-Scholes equation}. 
-Substituting equation \ref{mertonGBM} for $dS_t$ we get:
-\begin{equation*}
-	df(t,S_t) = \frac{\partial f}{\partial t} dt 
-	+ \frac{\partial f}{\partial S_t}
-	\left((r_d- r_f)S_tdt + \sigma S_t dW_t\right) 
-	+ \frac{1}{2}\frac{\partial^2 f}{\partial S_t^2}
-	\left((r-q)S_tdt + \sigma S_t dW_t\right)^2 \\ 
-\end{equation*}
+Using \textbf{Ito's multiplication rules} defined in Equation \ref{dWdW}, we can simplify the equation to: 
 \begin{equation}
-	= \frac{\partial f}{\partial t}dt
-	+ \frac{\partial f}{\partial S_t}
-	\left((r_d- r_f)S_tdt + \sigma S_tdW_t\right)
-	+ \frac{1}{2}
-	\frac{\partial^2 f}{\partial S_t^2}
-	\left((r_d- r_f)^2S_t^2(dt)^2 + 2r\sigma S_t^2(dt)(dW_t) + \sigma^2S_t^2(dW_t)^2\right)
-	\label{derivationbspdemerton}
+	\begin{aligned}
+		dX_t &= r\,dt+\sigma\,dW_t
+		-\frac{1}{2S_t^2}
+		\left(\sigma^2S_t^2\,dt\right) \\
+		dX_t &= \left(r-\frac{1}{2}\sigma^2\right)dt+\sigma\,dW_t
+	\end{aligned}
+	\label{eq:ito-log-stock}
+\end{equation}
+Introducing a dummy variable $s$ we can finally integrate all of the terms:
+\begin{equation}
+	\begin{aligned}
+		\int_t^T dX_s
+		&=
+		\int_t^T \left(r-\frac{1}{2}\sigma^2\right)ds
+		+\int_t^T \sigma\,dW_s \\
+		X_T-X_t
+		&=
+		\left(r-\frac{1}{2}\sigma^2\right)(T-t)
+		+\sigma(W_T-W_t)
+	\end{aligned}
+	\label{eq:integrated-log-stock}
+\end{equation}
+Substituting $ln(S_T) = X_T$ and $ln(S_t) = X_t$ into Equation \ref{eq:integrated-log-stock} we get:
+\begin{equation}
+	\begin{aligned}
+		\ln(S_T)-\ln(S_t)
+		&=
+		\left(r-\frac{1}{2}\sigma^2\right)(T-t)
+		+\sigma(W_T-W_t) \\
+		\ln\left(\frac{S_T}{S_t}\right)
+		&=
+		\left(r-\frac{1}{2}\sigma^2\right)(T-t)
+		+\sigma(W_T-W_t) \\
+		\frac{S_T}{S_t}
+		&=
+		\exp\left(
+		\left(r-\frac{1}{2}\sigma^2\right)(T-t)
+		+\sigma(W_T-W_t)
+		\right) \\
+	\end{aligned}
+\end{equation}
+This leaves us with the equation of a stock which is:
+\begin{equation}
+	S_T = S_t\exp\left(
+	\left(r-\frac{1}{2}\sigma^2\right)(T-t)
+	+\sigma(W_T-W_t)
+	\right)
+	\
+	\label{eq:gbm-terminal-stock-price}
+\end{equation}
+		
+
+\subsubsection{Monte Carlo Simulations for BS Call Options}
+In order to price an option with the Monte Carlo Simulation we must use the call payoff definition of an option. A payoff for a call is defined as:
+\begin{equation}
+	\operatorname{Payoff} = \max(S_T - K, 0)
+	\label{eq:payoffBS}
+\end{equation}
+Where $S_T$ is the stock price at the time of maturity $T$
+\newline \newline
+When we use a Monte Carlo Simulation we simulate a lot of these values for $S_T$ to find the expected value of a payoff. After we find the expected value of a payoff, we must discount it using the risk-free rate $r$ like this:
+\begin{equation}
+	C = e^{-r(T-t)} \mathbb{E}(\max(S_T - K, 0))
+	\label{callMC}
+\end{equation}
+where $e^{-r(T-t)}$ is the discount factor and $S_T$ is the same as defined in Equation \ref{eq:gbm-terminal-stock-price}
+In order to simulate the Wiener function, we use Equation \ref{wiener}
+\newpage
+The \textbf{max} function is also a part of the header \href{https://github.com/neeldevsen/pricingengines/blob/main/I%3A%20European%20Options/Headers/functions.hpp}{\textbf{functions.hpp}} and is defined as:
+\begin{listing}[ht]
+	\begin{minted}{cpp}
+		template <typename T>
+		auto max(T x, T y) -> std::common_type_t <double, T>
+		{ return x > y ? x : y; }
+	\end{minted}
+	\caption{Max Function}
+	\label{lst:max}
+\end{listing}
+\FloatBarrier
+This function uses the ternary operator \textbf{?} to return whichever value from \textbf{x} and \textbf{y} is greater. This is needed for the Monte Carlo simulation below:
+\begin{listing}[H]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <random>
+		#include "../Headers/black_scholes_struct.hpp"
+		#include "../Headers/functions.hpp"
+		
+		template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+		auto monteCarloBSCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int simulations) -> decltype(data.spot)
+		{
+			using commonType = decltype(data.spot);
+			std::random_device rd{};
+			std::mt19937 mt{rd()};
+			std::normal_distribution W {static_cast<commonType>(0), std::sqrt(data.maturity)};
+			commonType payoffs {};
+			
+			for (int i {}; i < simulations; ++i)
+			{
+				commonType S_final {data.spot * std::exp((data.rate - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
+				payoffs += max(S_final - data.strike, static_cast<commonType>(0));
+			}
+			payoffs /= simulations;
+			
+			return std::exp(-data.rate * data.maturity) * payoffs;
+		}
+	\end{minted}
+	\caption{Black-Scholes Call using Monte Carlo Simulations}
+	\label{lst:bsmontecarloCall}
+\end{listing}
+\FloatBarrier
+First, this function takes in the struct defined in Listing \ref{lst:bsstruct} as well as another parameter called \textbf{simulations}. \newline In line 10 we define a random device in order to seed our random number generator. For the random number generator in line 11 we use a \textbf{Mersenne Twister} generator. \newline Line 12 uses the \textbf{std::normal distribution} function from the \textbf{cmath} header that will normalise the random variable we generate into a standard normal random variable as shown in Equation \ref{wiener}. In line 15 a \textbf{for loop} is made with \textbf{simulation} number of iterations. \newline Line 17 it computes Equation \ref{eq:gbm-terminal-stock-price} and then is used in the Equation \ref{eq:payoffBS} which is computed in line 18. \newline After the for loop ends, an average of the payoffs is taken in line 20 by dividing the total payoffs by the number of simulations, and finally in line 22 this average payoff is discounted and then returned as the call price. 
+\subsubsection{Monte Carlo Simulations for BS Put Options}
+For a put option, it is pretty much the opposite, the payoff for a put option is defined as:
+\begin{equation}
+	\operatorname{Payoff} = \max(K - S_T, 0)
+	\label{eq:payoffBSPut}
+\end{equation}
+\newline 
+The equation for the put option value at time $t$ is identical to that of a call option, just the payoff is different. The value of a put option is represented as: 
+\begin{equation}
+	P = e^{-r(T-t)} \mathbb{E}(\max(K-S_T, 0))
+	\label{putMC}
+\end{equation}
+where $e^{-r(T-t)}$ is the discount factor and $S_T$ is the same as defined in Equation \ref{eq:gbm-terminal-stock-price}\\
+\begin{listing}[H]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <random>
+		#include "../Headers/black_scholes_struct.hpp"
+		#include "../Headers/functions.hpp"
+		
+		template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+		auto monteCarloBSPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int simulations) -> decltype(data.spot)
+		{
+			using commonType = decltype(data.spot);
+			std::random_device rd{};
+			std::mt19937 mt{rd()};
+			std::normal_distribution W {static_cast<commonType>(0), std::sqrt(data.maturity)};
+			commonType payoffs {};
+			
+			for (int i {}; i < simulations; ++i)
+			{
+				commonType S_final {data.spot * std::exp((data.rate - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
+				payoffs += max(data.strike - S_final , static_cast<commonType>(0));
+			}
+			payoffs /= simulations;
+			
+			return std::exp(-data.rate * data.maturity) * payoffs;
+		}
+	\end{minted}
+	\caption{Black-Scholes Put using Monte Carlo Simulations}
+	\label{lst:bsmontecarloPut}
+\end{listing}
+This implementation is almost identical except in line 18 the payoffs evaluate Equation \ref{eq:payoffBSPut} instead of Equation \ref{eq:payoffBS} 
+\newpage
+\subsection{Monte Carlo Simulation for Black 76}
+The source file can be found on my \href{https://github.com/neeldevsen/pricingengines/blob/main/I%3A%20European%20Options/02_Monte_Carlo/2.2_monte_carlo_simulation_B76.cpp}{\textbf{GitHub}}
+\subsubsection{Derivation of the value of a Future}
+First we will use the Black-76 assumption defined in Equation \ref{assumptionBS76}
+\begin{equation*} 
+	\begin{aligned}
+		dF_t &=  \sigma F_t\,dW_t \\
+		\frac{dF_t}{F_t} &= \sigma\,dW_t
+	\end{aligned}
+	\label{eq:b76-sde}
+\end{equation*}
+Define: 
+\begin{equation}
+	X_t = \ln(F_t)
+	\label{eq:log-future-definition}
+\end{equation}
+Using \textbf{Ito's Lemma} we can represent $dX_t$ in terms of $dF_t$ like this: 
+\begin{equation*}
+	dX_t = \frac{d X_t}{d F_t}\,dF_t + \frac{1}{2}\frac{d^2 X_t}{d F_t^2}(dF_t)^2 
+\end{equation*}
+Since $\frac{d X_t}{d F_t} = \frac{1}{F_t}$ and $\frac{d^2 X_t}{d F_t^2} = -\frac{1}{(F_t)^2}$. Substituting this in the previous equation we get:
+\begin{equation}
+		dX_t = \frac{1}{F_t}\left(\sigma F_t\,dW_t\right)
+		-\frac{1}{2F_t^2}
+		\left(\sigma F_t\,dW_t\right)^2 
+\end{equation}
+Using \textbf{Ito's multiplication rules} defined in Equation \ref{dtdt} , \ \ref{dtdW} and \ref{dWdW}, we can simplify the equation to: 
+\begin{equation}
+	\begin{aligned}
+		dX_t &= \sigma\,dW_t
+		-\frac{1}{2F_t^2}
+		\left(\sigma^2F_t^2\,dt\right) \\
+		dX_t &=\sigma\,dW_t  -\frac{1}{2}\sigma^2 dt
+	\end{aligned}
+	\label{eq:ito-log-stock}
+\end{equation}
+Again by introducing a dummy variable $s$ we can finally integrate all of the terms:
+\begin{equation}
+	\begin{aligned}
+		\int_t^T dX_s
+		&=
+		\int_t^T \sigma\,dW_s - \int_t^T \frac{1}{2}\sigma^2 ds
+		 \\
+		X_T-X_t
+		&=
+		\sigma(W_T - W_t) - \frac{1}{2}\sigma(T-t)
+	\end{aligned}
+	\label{eq:integrated-log-future}
+\end{equation}
+Substituting $ln(F_T) = X_T$ and $ln(F_t) = X_t$ into Equation \ref{eq:integrated-log-future} we get:
+\begin{equation}
+	\begin{aligned}
+		\ln(F_T)-\ln(F_t)
+		&=
+		\sigma(W_T - W_t) - \frac{1}{2}\sigma(T-t) \\
+		\ln\left(\frac{F_T}{F_t}\right)
+		&=
+		\sigma(W_T - W_t) - \frac{1}{2}\sigma(T-t) \\
+		\frac{F_T}{F_t}
+		&=
+		\exp(
+		\sigma(W_T - W_t) - \frac{1}{2}\sigma(T-t))
+		 \\
+	\end{aligned}
+\end{equation}
+This leaves us with the equation of a stock which is:
+\begin{equation}
+	F_T = F_t
+	\exp(
+	\sigma(W_T - W_t) - \frac{1}{2}\sigma(T-t))
+	\\
+	\label{eq:terminal-future-price}
 \end{equation}
 
-Substituting equations \ref{dtdt}, \ref{dtdW}, and \ref{dWdW} into equation 	\ref{derivationbspdemerton} we get:
+
+\subsubsection{Monte Carlo Simulations for B76 Call Options}
+In order to price an option with the Monte Carlo Simulation we must use the call payoff definition of an option. A payoff for a call is defined as:
 \begin{equation}
+	\operatorname{Payoff} = \max(F_T - K, 0)
+	\label{eq:payoffB76}
+\end{equation}
+Where $S_T$ is the stock price at the time of maturity $T$
+\newline \newline
+When we use a Monte Carlo Simulation we simulate a lot of these values for $S_T$ to find the expected value of a payoff. After we find the expected value of a payoff, we must discount it using the risk-free rate $r$ like this:
+\begin{equation}
+	C = e^{-r(T-t)} \mathbb{E}(\max(F_T - K, 0))
+	\label{callMCb76}
+\end{equation}
+where $e^{-r(T-t)}$ is the discount factor and $F_T$ is the same as defined in Equation \ref{eq:terminal-future-price}
+In order to simulate the Wiener function, we use Equation \ref{wiener}
+
+
+
+\begin{listing}[H]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <random>
+		#include "../Headers/black76_structs.hpp"
+		#include "../Headers/functions.hpp"
+		
+		template <typename F_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+		auto monteCarloB76Call(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data, int simulations) -> decltype(data.future)
+		{
+			using commonType = decltype(data.future);
+			std::random_device rd{};
+			std::mt19937 mt{rd()};
+			std::normal_distribution W {static_cast<commonType>(0), std::sqrt(data.maturity)};
+			commonType payoffs {};
+			
+			for (int i {}; i < simulations; ++i)
+			{
+				commonType F_final {data.future * std::exp(((data.volatility * W(mt)) - 0.5 * data.volatility * data.volatility * data.maturity))};
+				payoffs += max(F_final - data.strike, static_cast<commonType>(0));
+			}
+			payoffs /= simulations;
+			
+			return std::exp(-data.rate * data.maturity) * payoffs;
+		}
+	\end{minted}
+	\caption{Black-76 Call using Monte Carlo Simulations}
+	\label{lst:b76montecarloCall}
+\end{listing}
+\FloatBarrier
+This function is really similar to that of the one defined in Listing \ref{lst:bsmontecarloCall}   when it comes to the random number generation. This function passes in the \textbf{OptionDataB76} Struct instead as well as the integer parameter \textbf{simulations}. It computes Equation \ref{eq:bterminal-future-price} in line 18 and takes the average, discounts it and returns the value of the call option in line 22.
+
+\subsubsection{Monte Carlo Simulations for B76 Put Options}
+For a put option, it is pretty much the opposite, the payoff for a put option is defined as:
+\begin{equation}
+	\operatorname{Payoff} = \max(K - F_T, 0)
+	\label{eq:payoffB76Put}
+\end{equation}
+\newline 
+The equation for the put option value at time $t$ is represented as: 
+\begin{equation}
+	P = e^{-r(T-t)} \mathbb{E}(\max(K-F_T, 0))
+	\label{putB76MC}
+\end{equation}
+where $e^{-r(T-t)}$ is the discount factor and $F_T$ is the same as defined in Equation \ref{eq:terminal-future-price}\\
+\begin{listing}[H]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <random>
+		#include "../Headers/black76_structs.hpp"
+		#include "../Headers/functions.hpp"
+		
+		template <typename F_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+		auto monteCarloB76Put(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data, int simulations) -> decltype(data.future)
+		{
+			using commonType = decltype(data.future);
+			std::random_device rd{};
+			std::mt19937 mt{rd()};
+			std::normal_distribution W {static_cast<commonType>(0), std::sqrt(data.maturity)};
+			commonType payoffs {};
+			
+			for (int i {}; i < simulations; ++i)
+			{
+				commonType F_final {data.future * std::exp(((data.volatility * W(mt)) - 0.5 * data.volatility * data.volatility * data.maturity))};
+				payoffs += max(data.strike - F_final, static_cast<commonType>(0));
+			}
+			payoffs /= simulations;
+			
+			return std::exp(-data.rate * data.maturity) * payoffs;
+		}
+	\end{minted}
+	\caption{Black-76 Put using Monte Carlo Simulations}
+	\label{lst:b76smontecarloPut}
+\end{listing}
+This implementation is almost identical except in line 18 the payoffs evaluate Equation \ref{eq:payoffB76Put} instead of Equation \ref{eq:payoffB76} 
+\subsection{Monte Carlo Simulation with Dividends}
+The source can again be found on my \href{https://github.com/neeldevsen/pricingengines/blob/main/I%3A%20European%20Options/02_Monte_Carlo/2.3_monte_carlo_simulation_merton.cpp}{\textbf{GitHub}}
+\subsubsection{Derivation of the value of a Stock with Dividends}
+First we will use the \textbf{Merton SDE} defined in Equation \ref{mertonGBM}
+\begin{equation*} 
 	\begin{aligned}
-		df(t,S_t)  &= \frac{\partial f}{\partial t}dt
-		+ \frac{\partial f}{\partial S_t}
-		\left((r_d- r_f)S_tdt + \sigma S_tdW_t\right)
-		+ \frac{1}{2}
-		\frac{\partial^2 f}{\partial S_t^2}
-		\left(0 + 0 + \sigma^2S_t^2(dt)\right) \\
-		&= \frac{\partial f}{\partial t}dt
-		+ \frac{\partial f}{\partial S_t}
-		\left((r_d- r_f)S_tdt + \sigma S_tdW_t\right)
-		+ \frac{1}{2}
-		\frac{\partial^2 f}{\partial S_t^2}
-		\sigma^2S_t^2  \\
-		&= (\frac{\partial f}{\partial t} + (r_d- r_f)S_t \frac{\partial f}{\partial S_t} + 
-		\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 f}{\partial S_t^2}) dt + \sigma S_t \frac{\partial f}{\partial S_t}dW_t
+		dS_t &= (r-q)S_t\,dt + \sigma S_t\,dW_t \\
+		\frac{dS_t}{S_t} &= (r-q)\,dt + \sigma\,dW_t
 	\end{aligned}
-	\label{derivationbspde2merton}
-\end{equation}
-Define 
+	\label{eq:gbm-sde}
+\end{equation*}
+Define: 
 \begin{equation}
-	V(t,S)  \equiv f(t,S_t)
+	X_t = \ln(S_t)
+	\label{eq:log-stock-definition}
 \end{equation}
-Using the result from equation \ref{derivationbspde2merton}
-\begin{equation}
-	dV(t,S) = (\frac{\partial V}{\partial t} + (r-q)S \frac{\partial V}{\partial S} + 
-	\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2}) dt + \sigma S \frac{\partial V}{\partial S}dW_t
-	\label{dVgbmmerton}
-\end{equation}
-\newline
-Now we will define a delta-hedged portfolio $\Pi$ and $\Delta = \frac{\partial V}{\partial S}$ that satisfies:
-\begin{equation}
-	\Pi = V - \Delta S 
-	\label{portfolioDefmerton}
-\end{equation}
-For an infinitesimal time step we hedge the option by shorting $\Delta$ stocks. Since these stocks are in foreign currency, we must also give out foreign interest accumulated through the risk-free rate of interest in that country $r_f$. This is the reason behind the $-\Delta r_fSdt$ term
-\begin{equation}
-	d\Pi = dV - \Delta dS -\Delta r_f S dt
-\end{equation}
-Substituting equation \ref{dVgbmmerton} for $dV$ and equation \ref{risk-neutral} for $dS$ we get. 
+Using \textbf{Ito's Lemma} we can represent $dX_t$ in terms of $dS_t$ like this: 
+\begin{equation*}
+	dX_t = \frac{d X_t}{d S_t}\,dS_t + \frac{1}{2}\frac{d^2 X_t}{d S_t^2}(dS_t)^2 
+\end{equation*}
+Since $\frac{d X_t}{d S_t} = \frac{1}{S_t}$ and $\frac{d^2 X_t}{d S_t^2} = -\frac{1}{(S_t)^2}$. Substituting this in the previous equation we get:
 \begin{equation}
 	\begin{aligned}
-		d\Pi &= (\frac{\partial V}{\partial t} + (r_d- r_f)S \frac{\partial V}{\partial S} + 
-		\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2}) dt + \sigma S \frac{\partial V}{\partial S}dW_t - \Delta ((r_d- r_f)Sdt + \sigma SdW_t)  - \Delta r_f S dt \\
-		&= (\frac{\partial V}{\partial t} + (r_d- r_f)S \frac{\partial V}{\partial S } + 
-		\frac{1}{2}\sigma^2S_t^2\frac{\partial^2 V}{\partial S^2} - \Delta (r_d- r_f)S - \Delta r_f S ) dt + (\sigma S \frac{\partial V}{\partial S} - \Delta \sigma S ) dW_t
+		dX_t
+		&= \frac{1}{S_t}\left((r-q)S_t\,dt+\sigma S_t\,dW_t\right)
+		-\frac{1}{2S_t^2}
+		\left((r-q)S_t\,dt+\sigma S_t\,dW_t\right)^2 \\
+		dX_t &= (r-q)\,dt+\sigma\,dW_t
+		-\frac{1}{2S_t^2}
+		\left(
+		(r-q)^2S_t^2(dt)^2
+		+2r\sigma S_t^2\,dt\,dW_t
+		+\sigma^2S_t^2(dW_t)^2
+		\right) 
 	\end{aligned}
-	\label{dVgbm2merton}
 \end{equation}
-Since  $\Delta = \frac{\partial V}{\partial S}$ , equation \ref{dVgbm2merton} becomes:
+Using \textbf{Ito's multiplication rules} defined in Equation \ref{dtdt}, \ref{dtdW}, and \ref{dWdW}, we can simplify the equation to: 
 \begin{equation}
 	\begin{aligned}
-		d\Pi &= (\frac{\partial V}{\partial t} + (r_d- r_f)S \frac{\partial V}{\partial S} + 
-		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} -  (r_d- r_f)S \frac{\partial V}{\partial S} - r_fS \frac{\partial V}{\partial S} ) dt + (\sigma S \frac{\partial V}{\partial S} -\sigma S \frac{\partial V}{\partial S} ) dW_t \\
-		&= (\frac{\partial V}{\partial t} + (r_d- r_f)S \frac{\partial V}{\partial S} + 
-		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} -  (r_d- r_f)S \frac{\partial V}{\partial S} - r_f S \frac{\partial V}{\partial S}) dt \\
-		&= (\frac{\partial V}{\partial t} + 
-		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - r_f S \frac{\partial V}{\partial S}) dt
+		dX_t &= (r-q)\,dt+\sigma\,dW_t
+		-\frac{1}{2S_t^2}
+		\left(\sigma^2S_t^2\,dt\right) \\
+		dX_t &= \left(r-q-\frac{1}{2}\sigma^2\right)dt+\sigma\,dW_t
 	\end{aligned}
-	\label{dVgbm3merton}
+	\label{eq:ito-log-stock}
 \end{equation}
-Substituting equation \ref{riskfreearbritrage} into equation \ref{dVgbm3merton} we get:
+Introducing a dummy variable $s$ we can finally integrate all of the terms:
 \begin{equation}
 	\begin{aligned}
-		r_d \Pi dt &= (\frac{\partial V}{\partial t} + 
-		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - r_f S \frac{\partial V}{\partial S}) dt \\
-		r_d \Pi &= \frac{\partial V}{\partial t} + 
-		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - r_f S \frac{\partial V}{\partial S}
+		\int_t^T dX_s
+		&=
+		\int_t^T \left(r-q-\frac{1}{2}\sigma^2\right)ds
+		+\int_t^T \sigma\,dW_s \\
+		X_T-X_t
+		&=
+		\left(r-q-\frac{1}{2}\sigma^2\right)(T-t)
+		+\sigma(W_T-W_t)
 	\end{aligned}
-	\label{dVgbm4merton}
+	\label{eq:integrated-log-stock}
 \end{equation}
-Substituting equation \ref{portfolioDefmerton} into equation \ref{dVgbm4merton} we get:
+Substituting $ln(S_T) = X_T$ and $ln(S_t) = X_t$ into Equation \ref{eq:integrated-log-stock} we get:
 \begin{equation}
 	\begin{aligned}
-		r_d (V - \Delta S)&= \frac{\partial V}{\partial t} + 
-		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - r_f S \frac{\partial V}{\partial S}\\
-		r_d (V - \frac{\partial V}{\partial S} S)&= \frac{\partial V}{\partial t} + 
-		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - r_f S \frac{\partial V}{\partial S}  \\
-		r_d V - r_d S\frac{\partial V}{\partial S} &= \frac{\partial V}{\partial t} + 
-		\frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2} - r_fS \frac{\partial V}{\partial S} 
-	\end{aligned} 
-	\label{dVgbm5merton}
+		\ln(S_T)-\ln(S_t)
+		&=
+		\left(r-q-\frac{1}{2}\sigma^2\right)(T-t)
+		+\sigma(W_T-W_t) \\
+		\ln\left(\frac{S_T}{S_t}\right)
+		&=
+		\left(r-q-\frac{1}{2}\sigma^2\right)(T-t)
+		+\sigma(W_T-W_t) \\
+		\frac{S_T}{S_t}
+		&=
+		\exp\left(
+		\left(r-q-\frac{1}{2}\sigma^2\right)(T-t)
+		+\sigma(W_T-W_t)
+		\right) \\
+	\end{aligned}
 \end{equation}
-This finally gives us the equation:
-\begin{equation} 
-	\boxed{\frac{\partial V}{\partial t} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} + (r_d- r_f)S\frac{\partial V}{\partial S} - rV = 0 }
+This leaves us with the equation of a stock which is:
+\begin{equation}
+	S_T = S_t\exp\left(
+	\left(r-q-\frac{1}{2}\sigma^2\right)(T-t)
+	+\sigma(W_T-W_t)
+	\right)
+	\
+	\label{eq:merton-terminal-stock-price}
 \end{equation}
-which is the \textbf{Black-Scholes PDE with Merton's dividend adjustment}.  \cite{buchanan2014ExtensionsBS} \newline \newline
-This PDE uses the same variables as the \textbf{Black-Scholes PDE} with the only addition being the \textbf{dividend yield} $q$. $q$ affects the equaton by modifying $rS\frac{\partial V}{\partial S}$ (Black-Scholes PDE ) into the new $(r-q)S\frac{\partial V}{\partial S}$
+
+
+\subsubsection{Monte Carlo Simulations for Call Options with Dividends}
+In order to price an option with the Monte Carlo Simulation we must use the call payoff definition of an option. A payoff for a call is defined as:
+\begin{equation}
+	\operatorname{Payoff} = \max(S_T - K, 0)
+	\label{eq:payoffMerton}
+\end{equation}
+Where $S_T$ is the stock price with dividends at the time of maturity $T$. 
+\newline \newline
+The value of the call option is equal to:
+\begin{equation}
+	C = e^{-r(T-t)} \mathbb{E}(\max(S_T - K, 0))
+	\label{CallMCMerton}
+\end{equation}
+where $e^{-r(T-t)}$ is the discount factor and $S_T$ is the same as defined in Equation \ref{eq:merton-terminal-stock-price}
 \newpage
+Implementing the call option pricer in C++ like this: 
+\begin{listing}[H]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <random>
+		#include "../Headers/merton_struct.hpp"
+		#include "../Headers/functions.hpp"
+		
+		template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>
+		auto monteCarloMertonCall(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>& data, int simulations) -> decltype(data.spot)
+		{
+			using commonType = decltype(data.spot);
+			std::random_device rd{};
+			std::mt19937 mt{rd()};
+			std::normal_distribution W {static_cast<commonType>(0), std::sqrt(data.maturity)};
+			commonType payoffs {};
+			
+			for (int i {}; i < simulations; ++i)
+			{
+				commonType S_final {data.spot * std::exp((data.rate - data.dividend - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
+				payoffs += max(S_final - data.strike, static_cast<commonType>(0));
+			}
+			payoffs /= simulations;
+			
+			return std::exp(-data.rate * data.maturity) * payoffs;
+		}
+	\end{minted}
+	\caption{Black-Scholes -Merton Call using Monte Carlo Simulations}
+	\label{lst:mertonmontecarloCall}
+\end{listing}
+\FloatBarrier
+This function \textbf{monteCarloMertonCall} is extremely similar to the one from the GBM Monte Carlo simulation except for the fact it introduces another parameter in the struct \textbf{OptionDataMerton} which is the data member \textbf{dividend}. \newline This modified line 18 with the modification to Equation \ref{eq:payoffMerton} which then influences the value being returned in line 22 representing Equation \ref{CallMCMerton}. 
+\subsubsection{Monte Carlo Simulations for Put Options with Dividends}
+For a put option, it again is pretty much the opposite, with the payoff for a put option being defined as:
+\begin{equation}
+	\operatorname{Payoff} = \max(K - S_T, 0)
+	\label{eq:payoffMertonPut}
+\end{equation}
+\newline The value of a put option is represented as: 
+\begin{equation}
+	P = e^{-r(T-t)} \mathbb{E}(\max(K-S_T, 0))
+	\label{putMertonMC}
+\end{equation}
+where $S_T$ is the same as defined in Equation \ref{eq:merton-terminal-stock-price}\\
+\begin{listing}[H]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <random>
+		#include "../Headers/merton_struct.hpp"
+		#include "../Headers/functions.hpp"
+		
+		template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>
+		auto monteCarloMertonPut(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>& data, int simulations) -> decltype(data.spot)
+		{
+			using commonType = decltype(data.spot);
+			std::random_device rd{};
+			std::mt19937 mt{rd()};
+			std::normal_distribution W {static_cast<commonType>(0), std::sqrt(data.maturity)};
+			commonType payoffs {};
+			
+			for (int i {}; i < simulations; ++i)
+			{
+				commonType S_final {data.spot * std::exp((data.rate - data.dividend - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
+				payoffs += max(data.strike - S_final, static_cast<commonType>(0));
+			}
+			payoffs /= simulations;
+			
+			return std::exp(-data.rate * data.maturity) * payoffs;
+		}
+	\end{minted}
+	\caption{Black-Scholes-Merton Put using Monte Carlo Simulations}
+	\label{lst:mertonmontecarloPut}
+\end{listing}
+This implementation is almost identical except in line 18 the payoffs evaluate Equation \ref{eq:payoffMertonPut} instead of Equation \ref{eq:payoffMerton} 
+
+\subsection{Monte Carlo Variance Reduction Strategies}
+
+\subsubsection{Convergence without Variance Reduction Strategies}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{Images/2.4.1_price_convergence.pdf}
+	\caption{Absolute error against the number of Monte Carlo simulations.}
+	\label{fig:mc-absolute-error}
+\end{figure}
+
+\subsubsection{Antithetic Variates}
+
+
+\section{Binomial Trees}
+\setcounter{subsection}{0}
+\subsection{Binomial Trees with the GBM Assumption}
+\subsubsection{Deriving the Risk-Neutral Probability}
+
+A Binomial Tree is a numerical method that is produced by creating values until the time to maturity. The nodes at maturity are all the payoffs, and with the binomial tree we work backwards to find the price of the option at the initial time. 
+
+	\begin{figure}[h!] 
+	\centering
+	\begin{tikzpicture}[
+		scale=1.2,
+		stocknode/.style={draw, rectangle, inner sep=2pt, minimum width=12mm},
+		edgelabel/.style={draw=none, inner sep=1pt, font=\scriptsize}
+		]
+		\node at (3,-3.8) {each step $=\Delta t$};
+		
+		% Nodes (boxed)
+		\node[stocknode] (S0) at (0,0) {$S_{0,0}$};
+		
+		\node[stocknode] (S1u) at (2,1) {$S_{0,0}u$};
+		\node[stocknode] (S1d) at (2,-1) {$S_{0,0}d$};
+		
+		\node[stocknode] (S2uu) at (4,2) {$S_{0,0} u^2$};
+		\node[stocknode] (S2ud) at (4,0) {$S_{0,0} ud$};
+		\node[stocknode] (S2dd) at (4,-2) {$S_{0,0} d^2$};
+		
+		\node[stocknode] (S3uuu) at (6,3) {$S_{0,0} u^3$};
+		\node[stocknode] (S3uud) at (6,1) {$S_{0,0} u^2 d$};
+		\node[stocknode] (S3udd) at (6,-1) {$S_{0,0} u d^2$};
+		\node[stocknode] (S3ddd) at (6,-3) {$S_{0,0} d^3$};
+		
+		% Edges with probabilities (unboxed labels)
+		\draw[->] (S0) -- node[midway, above, edgelabel] {$p$} (S1u);
+		\draw[->] (S0) -- node[midway, below, yshift=-4pt, edgelabel] {$1-p$} (S1d);
+		
+		\draw[->] (S1u) -- node[midway, above, edgelabel] {$p$} (S2uu);
+		\draw[->] (S1u) -- node[midway, below, yshift=-4pt, edgelabel] {$1-p$} (S2ud);
+		\draw[->] (S1d) -- node[midway, above, edgelabel] {$p$} (S2ud);
+		\draw[->] (S1d) -- node[midway, below, yshift=-4pt, edgelabel] {$1-p$} (S2dd);
+		
+		\draw[->] (S2uu) -- node[midway, above, edgelabel] {$p$} (S3uuu);
+		\draw[->] (S2uu) -- node[midway, below, yshift=-4pt, edgelabel] {$1-p$} (S3uud);
+		\draw[->] (S2ud) -- node[midway, above, edgelabel] {$p$} (S3uud);
+		\draw[->] (S2ud) -- node[midway, below, yshift=-4pt, edgelabel] {$1-p$} (S3udd);
+		\draw[->] (S2dd) -- node[midway, above, edgelabel] {$p$} (S3udd);
+		\draw[->] (S2dd) -- node[midway, below, yshift=-4pt, edgelabel] {$1-p$} (S3ddd);
+		
+	\end{tikzpicture}
+	\caption{Binomial Tree for the underlying asset price}
+	\label{fig:binomial-tree}
+\end{figure}
+This is what a binomial tree for a stock looks like. It can go up with probability $p$, and go down with probability $1-p$. The stock $S_{a,b}$ is the node that is up $a$ nodes and down $b$ nodes
+\begin{equation}
+	S_{a,b} = u^a d^b S_{0,0}
+\end{equation}
+In order to derive the values for $u$ and $d$ we are going to use the equation of a stock from Equation \ref{eq:gbm-terminal-stock-price}
+\begin{equation*} 
+S_T = S_t \exp((r-\frac{1}{2}\sigma^2) (T-t) + \sigma(W_T - W_t))
+\end{equation*}
+On an interval of time $\Delta t$ we have
+\begin{equation*} 
+	\begin{aligned}
+	\frac{S_{t+\Delta t}}{S_t} &= \frac{S_t\exp((r-\frac{1}{2}\sigma^2) (\Delta t) + \sigma(W_{t +\Delta t} - W_t))}{S_t} \\
+	\frac{S_{t+\Delta t}}{S_t} &= \exp((r-\frac{1}{2}\sigma^2) (\Delta t) + \sigma(W_{t +\Delta t} - W_t)) \\
+	\end{aligned}
+\end{equation*}
+Using equation \ref{wiener} we have:
+\begin{equation*}
+	\begin{aligned}
+	W_{t+\Delta t} - W_t &\sim \mathcal {N} (0, \Delta t) \\
+	W_{t+\Delta t} - W_t &\sim \Delta t (\mathcal {N} (0,1) )
+	\end{aligned}
+\end{equation*}
+Letting $Z \sim \mathcal{N}(0,1)$ we have:
+\begin{equation*}
+	\frac{S_{t+\Delta t}}{S_t} = \exp((r-\frac{1}{2}\sigma^2) (\Delta t) + \sigma \sqrt{\Delta t} Z \\
+\end{equation*}
+At very small $\Delta t$ , $\sqrt{\Delta t} \gg \Delta t$  which means this equation can be approximated to:
+\begin{equation}
+	\frac{S_{t+\Delta t}}{S_t} \approxeq \exp(\sigma \sqrt{\Delta t} Z) 
+\end{equation}
+Now we define a Binomial Normal Variable $Z_{bin}$ such that $\Pr(Z_{bin} = 1 ) = \frac{1}{2}$ and $\Pr(Z_{bin} = -1) = \frac{1}{2}$
+This has the same expected value as the Wiener Function:
+\begin{equation}
+\mathbb{E}[Z_{bin}] = (\frac{1}{2} \times 1) + (\frac{1}{2} \times -1) = 0
+\end{equation}
+And also the same variance as the Wiener Function:
+\begin{equation}
+	\begin{aligned}
+	\operatorname{Var}(Z_{bin})&= \mathbb{E}[Z^2_{bin}] - (\mathbb{E}[Z_{bin}])^2 \\
+	\operatorname{Var}(Z_{bin})&= (\frac{1}{2} \times (1)^2) + (\frac{1}{2} \times (-1) ^ 2)  - 0^2 \\
+	\operatorname{Var}(Z_{bin})&= 1
+	\end{aligned}
+\end{equation}
+\newpage
+We define the up factor $u$ as the factor when $Z_{bin} = 1$ and down factor $d$ when $Z_{bin} = -1$ 
+\begin{equation*}
+	\begin{aligned}
+	u &= \frac{S_{t+ \Delta t}}{S_t} \\
+	u &= e^{\sigma  \sqrt{\Delta t} Z_{bin}} \\
+	\end{aligned}
+\end{equation*}
+Substituting $Z_{bin} = 1$ we get the value of $u$ to be:
+\begin{equation}
+		u = e^{\sigma  \sqrt{\Delta t}}
+		\label{u}
+\end{equation}
+Doing the same for the down factor:
+\begin{equation*}
+	\begin{aligned}
+		d &= \frac{S_{t+ \Delta t}}{S_t} \\
+		d &= e^{\sigma  \sqrt{\Delta t} Z_{bin}} \\
+		\end{aligned}
+\end{equation*}
+Now substituting $Z_{bin} = -1$ we get the value of $d$ to be:
+\begin{equation}
+		d = e^{-\sigma  \sqrt{\Delta t}}
+		\label{d}
+\end{equation}
+When deriving the risk-neutral probability we know that the expected value of a stock at time $t + \Delta t$ is the value of that of $t$ compounded for the time $\Delta t$ or:
+\begin{equation}
+	\mathbb{E}[S_{t + \Delta t}] = S_{t} e ^{r\Delta t}
+\end{equation}
+According to the binomial tree
+\begin{equation*}
+	\begin{aligned}
+	\mathbb{E}[S_{t + \Delta t}] &= S_t (u p + (1-p)d) \\
+	 S_{t} e ^{r\Delta t} &= S_t (u p + (1-p)d) \\
+	 e ^{r\Delta t} &= u p + (1-p)d \\
+	 e ^{r\Delta t} &= u p + d- d p \\
+	 e ^{r\Delta t} &= (u -d) p + d \\
+	 \frac{e ^{r\Delta t} - d}{u -d}  &= p
+	\end{aligned}
+\end{equation*}
+Substituting Equations \ref{u} and \ref{d} for $u$ and $d$ respectively we get the risk neutral probability $p$ to be:
+\begin{equation}
+		p = \frac{e ^{r\Delta t} - e^{-\sigma  \sqrt{\Delta t}}}{e^{\sigma  \sqrt{\Delta t}} -e^{-\sigma  \sqrt{\Delta t}}}  
+		\label{pBS}
+\end{equation}
+\newpage
+	\begin{figure}[h!] 
+	\centering
+	\begin{tikzpicture}[
+		scale=1.2,
+		stocknode/.style={draw, rectangle, inner sep=2pt, minimum width=12mm},
+		edgelabel/.style={draw=none, inner sep=1pt, font=\scriptsize}
+		]
+		\node at (3,-3.8) {each step $=\Delta t$};
+		
+		% Nodes (boxed)
+		\node[stocknode] (V0) at (0,0) {$V_{0,0}$};
+		
+		\node[stocknode] (V1u) at (2,1) {$V_{1,0}$};
+		\node[stocknode] (V1d) at (2,-1) {$V_{0,1}$};
+		
+		\node[stocknode] (V2uu) at (4,2) {$V_{2,0} $};
+		\node[stocknode] (V2ud) at (4,0) {$V_{1,1} $};
+		\node[stocknode] (V2dd) at (4,-2) {$V_{0,2} $};
+		
+		\node[stocknode] (V3uuu) at (6,3) {$V_{3,0} $};
+		\node[stocknode] (V3uud) at (6,1) {$V_{2,1} $};
+		\node[stocknode] (V3udd) at (6,-1) {$V_{1,2} $};
+		\node[stocknode] (V3ddd) at (6,-3) {$V_{0,3} $};
+		
+		% Edges with probabilities (unboxed labels)
+		\draw[->] (V1u) -- node[midway, above, edgelabel] {p} (V0);
+		\draw[->] (V1d) -- node[midway, below, yshift=-4pt, edgelabel] {1-p} (V0);
+		
+		\draw[->] (V2uu) -- node[midway, above, edgelabel] {p} (V1u);
+		\draw[->] (V2ud) -- node[midway, below, yshift=-4pt, edgelabel] {1-p} (V1u);
+		\draw[->] (V2ud) -- node[midway, above, edgelabel] {p} (V1d);
+		\draw[->] (V2dd) -- node[midway, below, yshift=-4pt, edgelabel] {1-p} (V1d);
+		
+		\draw[->] (V3uuu) -- node[midway, above, edgelabel] {p} (V2uu);
+		\draw[->] (V3uud) -- node[midway, below, yshift=-4pt, edgelabel] {1-p} (V2uu);
+		\draw[->] (V3uud) -- node[midway, above, edgelabel] {p} (V2ud);
+		\draw[->] (V3udd) -- node[midway, below, yshift=-4pt, edgelabel] {1-p} (V2ud);
+		\draw[->] (V3udd) -- node[midway, above, edgelabel] {p} (V2dd);
+		\draw[->] (V3ddd) -- node[midway, below, yshift=-4pt, edgelabel] {1-p} (V2dd);
+		
+	\end{tikzpicture}
+	\caption{Reverse Binomial Tree to find payoffs}
+	\label{fig:binomial-tree-payoffs}
+\end{figure}
+For the Binomial Tree, we first compute the terminal payoffs. Using the terminal payoffs we work in a reverse fashion in order to calculate the payoffs in the nodes before, with this formula: 
+\begin{equation}
+	V_{a,b} = e^{-r\Delta t}(pV_{a+1,b} + (1-p)V_{a,b+1})
+	\label{eq:expectedPayoffBS}
+\end{equation}
+In order to create the terminal payoffs for a Binomial Tree of size $n$, the formula for a European Call is:
+\begin{equation}
+	V_{k,n-k} = \max(u^{k-1}d^{n-k+1}S_{0,0} - K, 0)
+		\label{terminalpayoffBS}
+\end{equation}
+where $0 \leq k \leq n$ \newline
+For a put European Put option, the terminal payoffs are:
+\begin{equation}
+	V_{k,n-k} = \max(K - u^{k-1}d^{n-k+1}S_{0,0}, 0)
+	\label{terminalpayoffBSPut}
+\end{equation}
+\newpage
+\subsubsection{Binomial Tree for BS Call Options}
+\begin{listing}[H]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <vector>
+		#include <type_traits>
+		#include "../Headers/functions.hpp"
+		#include "../Headers/black_scholes_struct.hpp"
+		
+		template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+		auto binomialTreeBSCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, const int N) -> decltype(data.spot)
+		{
+			using commonType = decltype(data.spot);
+			
+			auto sqrt_deltat {std::sqrt(data.maturity / static_cast<commonType>(N))};
+			auto u {std::exp(data.volatility * sqrt_deltat)};
+			auto d {std::exp(-data.volatility * sqrt_deltat)};
+			auto p {(std::exp(data.rate * data.maturity / N) - d) / (u -d)};
+			
+			std::vector<commonType> V_current (N + 1);
+			for (int j {}; j < N + 1; ++j)
+			{
+				V_current[j] = max(data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j)) * std::pow(static_cast<double>(d), static_cast<double>(N-j)) - data.strike , static_cast<commonType>(0));
+			}
+			
+			for (int i {}; i < N ; ++i)
+			{
+				std::vector<commonType> V_new (N-i);
+				for (int k {}; k < N-i; ++k)
+				{
+					V_new[k] = p * V_current[k+1] + (1-p) * V_current[k];
+				}
+				std::swap(V_current, V_new);
+			}   
+			
+			return V_current[0] * std::exp(-data.rate * data.maturity);
+		}
+	\end{minted}
+	\caption{Black-Scholes-Merton Put using Monte Carlo Simulations}
+	\label{lst:bscallbinomialtree}
+\end{listing}
+\FloatBarrier
+This function \textbf{binomialTreeBSCall} passes in the struct \textbf{OptionDataBS} and another integer parameter \textbf{N} which represents the total  computes Equation \ref{u} in line 13, Equation \ref{d} in line 14 and Equation \ref{pBS} in line 15.  \newline Lines 17-20 basically is evaluating Equation \ref{terminalpayoffBS} and storing it in a vector of size $N + 1$. This is then used at the start of line 23. \newline The mechanism here is that it first initialises a new vector that represents the column of nodes at the previous step. \newline Line 28 evaluates Equation \ref{eq:expectedPayoffBS} without the discount factor $e^{-r\Delta t}$. After it is done evaluating that, in line 30 it swaps the vectors, so we can use it again.  \newline The loop variable \textbf{i} is incremented up a value, and a new vector $\operatorname{V_{new}}$ is defined with a length of $N -i$. This continues untill $i = N -1$ when the loop stop since the vector$\operatorname{V_{current}}$ has a length of only 1 value. This is the final terminal payoff. Finally in line 33 this value is returned, as well as discounted with a factor of $e^{-r(T-t)}$.
+\newline
+\newline
+\subsubsection{Time Complexity of Binomial Trees}
+The time complexity of this algorithm mainly comes from the double nested loops from lines 23-31. The total number of iterations in the program is:
+\begin{equation}
+	\begin{aligned}
+	N_{iterations} &= N + \sum_{i = 0}^{N - 1} (N-i) \\
+	N_{iterations} &= N + N^2 - \frac{N(N-1)}{2} \\
+	N_{iterations} &= \frac{N^2 + 3N}{2} \\
+	\end{aligned}
+\end{equation}
+Substituting this into the time complexity expression:
+\begin{equation*}
+		 \mathcal{O}(\frac{N^2 + 3N}{2}) \\ 
+\end{equation*}
+Since we take the term with the highest order and exclude constants, the final time complexity of the Binomial Tree is:
+\begin{equation}
+	\boxed{\mathcal{O}(N^2) }
+\end{equation}
+
+\subsubsection{Binomial Tree for BS Put Options}
+\begin{listing}[H]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <vector>
+		#include <type_traits>
+		#include "../Headers/functions.hpp"
+		#include "../Headers/black76_structs.hpp"
+		
+		template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+		auto binomialTreeBSCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, const int N) -> decltype(data.spot)
+		{
+			using commonType = decltype(data.spot);
+			
+			auto sqrt_deltat {std::sqrt(data.maturity / static_cast<commonType>(N))};
+			auto u {std::exp(data.volatility * sqrt_deltat)};
+			auto d {std::exp(-data.volatility * sqrt_deltat)};
+			auto p {(std::exp(data.rate * data.maturity / N) - d) / (u -d)};
+			
+			std::vector<commonType> V_current (N + 1);
+			for (int j {}; j < N + 1; ++j)
+			{
+				V_current[j] = max(data.strike - data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j)) * std::pow(static_cast<double>(d), static_cast<double>(N-j)) , static_cast<commonType>(0));
+			}
+			
+			for (int i {}; i < N ; ++i)
+			{
+				std::vector<commonType> V_new (N-i);
+				for (int k {}; k < N-i; ++k)
+				{
+					V_new[k] = p * V_current[k+1] + (1-p) * V_current[k];
+				}
+				std::swap(V_current, V_new);
+			}   
+			
+			return V_current[0] * std::exp(-data.rate * data.maturity);
+		}
+	\end{minted}
+	\caption{Black-Scholes-Merton Put using Monte Carlo Simulations}
+	\label{lst:bsbinomialtree}
+\end{listing}
+This is exactly the same as the European Binomial Tree in Listing \ref{lst:bscallbinomialtree} except in line 20 it uses Equation \ref{terminalpayoffBSPut} instead of Equation \ref{terminalpayoffBSPut}.
+\subsection{Binomial Trees with Black-76 Options}
+\subsubsection{Deriving the Risk-Neutral Probability for Futures}
+
+A Binomial Tree is a numerical method that is produced by creating values until the time to maturity. The nodes at maturity are all the payoffs, and with the binomial tree we work backwards to find the price of the option at the initial time. 
+
+\begin{figure}[h!] 
+	\centering
+	\begin{tikzpicture}[
+		scale=1.2,
+		stocknode/.style={draw, rectangle, inner sep=2pt, minimum width=12mm},
+		edgelabel/.style={draw=none, inner sep=1pt, font=\scriptsize}
+		]
+		\node at (3,-3.8) {each step $=\Delta t$};
+		
+		% Nodes (boxed)
+		\node[stocknode] (S0) at (0,0) {$F_{0,0}$};
+		
+		\node[stocknode] (S1u) at (2,1) {$F_{0,0}u$};
+		\node[stocknode] (S1d) at (2,-1) {$F_{0,0}d$};
+		
+		\node[stocknode] (S2uu) at (4,2) {$F_{0,0} u^2$};
+		\node[stocknode] (S2ud) at (4,0) {$F_{0,0} ud$};
+		\node[stocknode] (S2dd) at (4,-2) {$F_{0,0} d^2$};
+		
+		\node[stocknode] (S3uuu) at (6,3) {$F_{0,0} u^3$};
+		\node[stocknode] (S3uud) at (6,1) {$F_{0,0} u^2 d$};
+		\node[stocknode] (S3udd) at (6,-1) {$F_{0,0} u d^2$};
+		\node[stocknode] (S3ddd) at (6,-3) {$F_{0,0} d^3$};
+		
+		% Edges with probabilities (unboxed labels)
+		\draw[->] (S0) -- node[midway, above, edgelabel] {$p$} (S1u);
+		\draw[->] (S0) -- node[midway, below, yshift=-4pt, edgelabel] {$1-p$} (S1d);
+		
+		\draw[->] (S1u) -- node[midway, above, edgelabel] {$p$} (S2uu);
+		\draw[->] (S1u) -- node[midway, below, yshift=-4pt, edgelabel] {$1-p$} (S2ud);
+		\draw[->] (S1d) -- node[midway, above, edgelabel] {$p$} (S2ud);
+		\draw[->] (S1d) -- node[midway, below, yshift=-4pt, edgelabel] {$1-p$} (S2dd);
+		
+		\draw[->] (S2uu) -- node[midway, above, edgelabel] {$p$} (S3uuu);
+		\draw[->] (S2uu) -- node[midway, below, yshift=-4pt, edgelabel] {$1-p$} (S3uud);
+		\draw[->] (S2ud) -- node[midway, above, edgelabel] {$p$} (S3uud);
+		\draw[->] (S2ud) -- node[midway, below, yshift=-4pt, edgelabel] {$1-p$} (S3udd);
+		\draw[->] (S2dd) -- node[midway, above, edgelabel] {$p$} (S3udd);
+		\draw[->] (S2dd) -- node[midway, below, yshift=-4pt, edgelabel] {$1-p$} (S3ddd);
+		
+	\end{tikzpicture}
+	\caption{Binomial Tree for the future price}
+	\label{fig:binomial-tree}
+\end{figure}
+This is what a binomial tree for a future looks like. It can go up with probability $p$, and go down with probability $1-p$. The stock $F_{a,b}$ is the node that is up $a$ nodes and down $b$ nodes
+\begin{equation}
+	F_{a,b} = u^a d^b F_{0,0}
+\end{equation}
+In order to derive the values for $u$ and $d$ we are going to use the equation of a stock from Equation \ref{eq:terminal-future-price}
+\begin{equation*} 
+	F_T = F_t \exp(\sigma(W_T - W_t) - \frac{1}{2}\sigma^2 (T-t))
+\end{equation*}
+On an interval of time $\Delta t$ we have
+\begin{equation*} 
+	\begin{aligned}
+		\frac{F_{t+\Delta t}}{F_t} &= \frac{F_t \exp((\sigma(W_T - W_t) - \frac{1}{2}\sigma^2 (T-t))}{F_t} \\
+		\frac{F_{t+\Delta t}}{F_t} &= \exp(\sigma(W_T - W_t) - \frac{1}{2}\sigma^2 (T-t)) \\
+	\end{aligned}
+\end{equation*}
+Using equation \ref{wiener} we have:
+\begin{equation*}
+	\begin{aligned}
+		W_{t+\Delta t} - W_t &\sim \mathcal {N} (0, \Delta t) \\
+		W_{t+\Delta t} - W_t &\sim \Delta t (\mathcal {N} (0,1) )
+	\end{aligned}
+\end{equation*}
+Letting $Z \sim \mathcal{N}(0,1)$ we have:
+\begin{equation*}
+	\frac{F_{t+\Delta t}}{F_t} =\exp((\sigma(\sqrt{\Delta t} Z - \frac{1}{2}\sigma^2 (T-t)) \\
+\end{equation*}
+At very small $\Delta t$ , $\sqrt{\Delta t} \gg \Delta t$  which means this equation can be approximated to:
+\begin{equation}
+	\frac{F_{t+\Delta t}}{F_t} \approxeq \exp(\sigma \sqrt{\Delta t} Z) 
+\end{equation}
+Using the same method for the Black-Scholes by defining a normal variable $Z_{bin}$ we solve for $u$ like this:
+\begin{equation*}
+	\begin{aligned}
+		u &= \frac{F_{t+ \Delta t}}{F_t} \\
+		u &= e^{\sigma  \sqrt{\Delta t} Z_{bin}} \\
+	\end{aligned}
+\end{equation*}
+Substituting $Z_{bin} = 1$ we get the value of $u$ to be:
+\begin{equation}
+	u = e^{\sigma  \sqrt{\Delta t}}
+	\label{ub76}
+\end{equation}
+And for $d$ like this:
+\begin{equation*}
+	\begin{aligned}
+		d &= \frac{F_{t+ \Delta t}}{F_t} \\
+		d &= e^{\sigma  \sqrt{\Delta t} Z_{bin}} \\
+	\end{aligned}
+\end{equation*}
+Now substituting $Z_{bin} = -1$ we get the value of $d$ to be:
+\begin{equation}
+	d = e^{-\sigma  \sqrt{\Delta t}}
+	\label{db76}
+\end{equation}
+When deriving the risk-neutral probability we know that the expected value of a stock at time $t + \Delta t$ is the value of that of $t$ compounded for the time $\Delta t$ or:
+\begin{equation}
+	\mathbb{E}[F_{t + \Delta t}] = F_{t} 
+\end{equation}
+According to the binomial tree
+\begin{equation*}
+	\begin{aligned}
+		\mathbb{E}[F_{t + \Delta t}] &= F_t (u p + (1-p)d) \\
+		F_{t}  &= F_t (u p + (1-p)d) \\
+		1 &= u p + (1-p)d \\
+		1 &= u p + d- d p \\
+		1 &= (u -d) p + d \\
+		\frac{e ^{r\Delta t} - d}{u -d}  &= p
+	\end{aligned}
+\end{equation*}
+Substituting Equations \ref{u} and \ref{d} for $u$ and $d$ respectively we get the risk neutral probability $p$ to be:
+\begin{equation}
+	p = \frac{1 - e^{-\sigma  \sqrt{\Delta t}}}{e^{\sigma  \sqrt{\Delta t}} -e^{-\sigma  \sqrt{\Delta t}}}  
+	\label{pB76}
+\end{equation}
+
+For the Binomial Tree, we first compute the terminal payoffs. Using the terminal payoffs we work in a reverse fashion in order to calculate the payoffs in the nodes before, with this formula: 
+\begin{equation}
+	V_{a,b} = e^{-r\Delta t}(pV_{a+1,b} + (1-p)V_{a,b+1})
+	\label{eq:expectedPayoffB76}
+\end{equation}
+In order to create the terminal payoffs for a Binomial Tree of size $n$, the formula for a European Call is:
+\begin{equation}
+	V_{k,n-k} = \max(u^{k-1}d^{n-k+1}F_{0,0} - K, 0)
+	\label{terminalpayoffB76}
+\end{equation}
+where $0 \leq k \leq n$ \newline
+For a put European Put option, the terminal payoffs are:
+\begin{equation}
+	V_{k,n-k} = \max(K - u^{k-1}d^{n-k+1}F_{0,0}, 0)
+	\label{terminalpayoffB76Put}
+\end{equation}
+\newpage
+\subsubsection{Binomial Tree for BS Call Options}
+\begin{listing}[H]
+	\begin{minted}{cpp}
+		#include <cmath>
+		#include <vector>
+		#include <type_traits>
+		#include "../Headers/functions.hpp"
+		#include "../Headers/black_scholes_struct.hpp"
+		
+		template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+		auto binomialTreeBSCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, const int N) -> decltype(data.spot)
+		{
+			using commonType = decltype(data.spot);
+			
+			auto sqrt_deltat {std::sqrt(data.maturity / static_cast<commonType>(N))};
+			auto u {std::exp(data.volatility * sqrt_deltat)};
+			auto d {std::exp(-data.volatility * sqrt_deltat)};
+			auto p {(std::exp(data.rate * data.maturity / N) - d) / (u -d)};
+			
+			std::vector<commonType> V_current (N + 1);
+			for (int j {}; j < N + 1; ++j)
+			{
+				V_current[j] = max(data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j)) * std::pow(static_cast<double>(d), static_cast<double>(N-j)) - data.strike , static_cast<commonType>(0));
+			}
+			
+			for (int i {}; i < N ; ++i)
+			{
+				std::vector<commonType> V_new (N-i);
+				for (int k {}; k < N-i; ++k)
+				{
+					V_new[k] = p * V_current[k+1] + (1-p) * V_current[k];
+				}
+				std::swap(V_current, V_new);
+			}   
+			
+			return V_current[0] * std::exp(-data.rate * data.maturity);
+		}
+	\end{minted}
+	\caption{Black-Scholes-Merton Put using Monte Carlo Simulations}
+	\label{lst:b76callbinomialtree}
+\end{listing}
+\FloatBarrier
+\subsection{Notes on Binomial Tree without Vectors}
+\section{Trinomial Tree}
+\subsection{Trinomial Trees using the GBM Assumption}
+\subsection{Trinomial Trees with Black-76}
+\subsection{Trinomial Trees for Stocks with Dividends}
+
+\section{Finite Differences}
+\subsection{The Finite Difference Mechanism}
+\subsubsection{Time and Space Discretisation}
+\subsubsection{Crank-Nicolson Method}
+\subsubsection{Assembling the Tridiagonal Matrix}
+\subsubsection{Thomas Algorithm}
+\subsection{Finite Differences for Black-76}
+\subsection{Finite Differences for Stocks with Dividends}
+
+\section{Heston Model}
+\subsection{Coupled Heston SDEs}
+\subsection{Dual Monte Carlo Simulations}
+\subsection{Euler-Maruyama Discretisation}
+\section{Merton Jump Diffusion}
+\newpage
+
+\part{American Options}
+\setcounter{section}{0}
+\section{American Binomial Tree}
+\section{American Trinomial Tree}
+\section{Finite Differences}
+\section{Longstaff-Schwartz Monte Carlo}
+
+\part {Exotic Options}
 \begin{thebibliography}	{9} 
 \bibitem{shreve2004}
 Shreve, S. (2004). \textit{Stochastic Calculus for Finance I: The Binomial Asset Pricing Model}. Springer Science \& Business Media.
@@ -814,6 +1894,7 @@ Black, F. (1976). The pricing of commodity contracts. \textit{Journal of Financi
 
 \bibitem{buchanan2014ExtensionsBS}
 Buchanan, J. R. (2014). \textit{Extensions to the Black-Scholes equation: An undergraduate introduction to financial mathematics}. Millersville University. \url{https://sites.millersville.edu/rbuchanan/book/Extensions.pdf}
+
 
 \end{thebibliography}
 

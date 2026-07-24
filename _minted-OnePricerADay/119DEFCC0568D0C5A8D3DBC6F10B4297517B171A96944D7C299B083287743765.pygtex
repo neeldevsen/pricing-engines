@@ -1,0 +1,25 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{+w}{		}\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}cmath\PYGZgt{}}
+\PYG{+w}{		}\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}random\PYGZgt{}}
+\PYG{+w}{		}\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}../Headers/merton\PYGZus{}struct.hpp\PYGZdq{}}
+\PYG{+w}{		}\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}../Headers/functions.hpp\PYGZdq{}}
+\PYG{+w}{		}
+\PYG{+w}{		}\PYG{k}{template}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{S\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{K\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{r\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{q\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{sigma\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{T\PYGZus{}t}\PYG{o}{\PYGZgt{}}
+\PYG{+w}{		}\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{monteCarloMertonPut}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{OptionDataMerton}\PYG{o}{\PYGZlt{}}\PYG{n}{S\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{K\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{r\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{q\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sigma\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{T\PYGZus{}t}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{simulations}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k}{decltype}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{spot}\PYG{p}{)}
+\PYG{+w}{		}\PYG{p}{\PYGZob{}}
+\PYG{+w}{			}\PYG{k}{using}\PYG{+w}{ }\PYG{n}{commonType}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{decltype}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{spot}\PYG{p}{);}
+\PYG{+w}{			}\PYG{n}{std}\PYG{o}{::}\PYG{n}{random\PYGZus{}device}\PYG{+w}{ }\PYG{n}{rd}\PYG{p}{\PYGZob{}\PYGZcb{};}
+\PYG{+w}{			}\PYG{n}{std}\PYG{o}{::}\PYG{n}{mt19937}\PYG{+w}{ }\PYG{n}{mt}\PYG{p}{\PYGZob{}}\PYG{n}{rd}\PYG{p}{()\PYGZcb{};}
+\PYG{+w}{			}\PYG{n}{std}\PYG{o}{::}\PYG{n}{normal\PYGZus{}distribution}\PYG{+w}{ }\PYG{n}{W}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{k}{static\PYGZus{}cast}\PYG{o}{\PYGZlt{}}\PYG{n}{commonType}\PYG{o}{\PYGZgt{}}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{maturity}\PYG{p}{)\PYGZcb{};}
+\PYG{+w}{			}\PYG{n}{commonType}\PYG{+w}{ }\PYG{n}{payoffs}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{};}
+\PYG{+w}{			}
+\PYG{+w}{			}\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{};}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{simulations}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}
+\PYG{+w}{			}\PYG{p}{\PYGZob{}}
+\PYG{+w}{				}\PYG{n}{commonType}\PYG{+w}{ }\PYG{n}{S\PYGZus{}final}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{n}{data}\PYG{p}{.}\PYG{n}{spot}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{exp}\PYG{p}{((}\PYG{n}{data}\PYG{p}{.}\PYG{n}{rate}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{dividend}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{volatility}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{volatility}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{maturity}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{volatility}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{W}\PYG{p}{(}\PYG{n}{mt}\PYG{p}{)))\PYGZcb{};}
+\PYG{+w}{				}\PYG{n}{payoffs}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{max}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{strike}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{S\PYGZus{}final}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{static\PYGZus{}cast}\PYG{o}{\PYGZlt{}}\PYG{n}{commonType}\PYG{o}{\PYGZgt{}}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{));}
+\PYG{+w}{			}\PYG{p}{\PYGZcb{}}
+\PYG{+w}{			}\PYG{n}{payoffs}\PYG{+w}{ }\PYG{o}{/=}\PYG{+w}{ }\PYG{n}{simulations}\PYG{p}{;}
+\PYG{+w}{			}
+\PYG{+w}{			}\PYG{k}{return}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{exp}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{n}{data}\PYG{p}{.}\PYG{n}{rate}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{.}\PYG{n}{maturity}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{payoffs}\PYG{p}{;}
+\PYG{+w}{		}\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

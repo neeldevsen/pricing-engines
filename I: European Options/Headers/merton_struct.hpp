@@ -1,5 +1,5 @@
-#ifndef GBMOPTIONS
-#define GBMOPTIONS
+#ifndef MERTONSTRUCTS
+#define MERTONSTRUCTS
 #include <type_traits>
 
 template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>

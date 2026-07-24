@@ -1,7 +1,6 @@
 #ifndef FUNCTIONS
 #define FUNCTIONS
 
-#include <iostream>
 #include <cmath>
 #include <type_traits>
 

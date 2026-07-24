@@ -1,0 +1,22 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{+w}{		}\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}type\PYGZus{}traits\PYGZgt{}}
+\PYG{+w}{		}\PYG{c+cp}{\PYGZsh{}ifndef MERTONSTRUCTS}
+\PYG{+w}{		}\PYG{c+cp}{\PYGZsh{}define MERTONSTRUCTS}
+\PYG{+w}{		}
+\PYG{+w}{		}\PYG{k}{template}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{S\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{K\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{r\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{q\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{sigma\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{T\PYGZus{}t}\PYG{o}{\PYGZgt{}}
+\PYG{+w}{		}
+\PYG{+w}{		}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{OptionDataMerton}
+\PYG{+w}{		}\PYG{p}{\PYGZob{}}
+\PYG{+w}{			}\PYG{k}{using}\PYG{+w}{ }\PYG{n}{CommonType}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{common\PYGZus{}type\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{S\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{K\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{r\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{q\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sigma\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{T\PYGZus{}t}\PYG{o}{\PYGZgt{}}\PYG{p}{;}
+\PYG{+w}{			}\PYG{n}{CommonType}\PYG{+w}{ }\PYG{n}{spot}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{};}
+\PYG{+w}{			}\PYG{n}{CommonType}\PYG{+w}{ }\PYG{n}{strike}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{};}
+\PYG{+w}{			}\PYG{n}{CommonType}\PYG{+w}{ }\PYG{n}{rate}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{};}
+\PYG{+w}{			}\PYG{n}{CommonType}\PYG{+w}{ }\PYG{n}{dividend}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{};}
+\PYG{+w}{			}\PYG{n}{CommonType}\PYG{+w}{ }\PYG{n}{volatility}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{};}
+\PYG{+w}{			}\PYG{n}{CommonType}\PYG{+w}{ }\PYG{n}{maturity}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{};}
+\PYG{+w}{		}\PYG{p}{\PYGZcb{};}
+\PYG{+w}{		}
+\PYG{+w}{		}\PYG{k}{template}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{S\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{K\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{r\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{q\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{sigma\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{T\PYGZus{}t}\PYG{o}{\PYGZgt{}}
+\PYG{+w}{		}\PYG{n}{OptionDataMerton}\PYG{p}{(}\PYG{n}{S\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{K\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{r\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{q\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sigma\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{T\PYGZus{}t}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{OptionDataMerton}\PYG{o}{\PYGZlt{}}\PYG{n}{S\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{K\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{r\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{q\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sigma\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{T\PYGZus{}t}\PYG{o}{\PYGZgt{}}\PYG{p}{;}
+\PYG{+w}{		}\PYG{c+cp}{\PYGZsh{}endif}
+\end{Verbatim}
