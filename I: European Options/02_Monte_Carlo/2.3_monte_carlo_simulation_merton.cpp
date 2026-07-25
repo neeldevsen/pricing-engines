@@ -16,7 +16,7 @@ auto monteCarloMertonCall(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_
     for (int i {}; i < simulations; ++i)
     {
         commonType S_final {data.spot * std::exp((data.rate - data.dividend - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
-        payoffs += max(S_final - data.strike, static_cast<commonType>(0));
+        payoffs += std::max(S_final - data.strike, static_cast<commonType>(0));
     }
     payoffs /= simulations;
     
@@ -35,7 +35,7 @@ auto monteCarloMertonPut(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t
     for (int i {}; i < simulations; ++i)
     {
         commonType S_final {data.spot * std::exp((data.rate - data.dividend - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
-        payoffs += max(data.strike - S_final, static_cast<commonType>(0));
+        payoffs += std::max(data.strike - S_final, static_cast<commonType>(0));
     }
     payoffs /= simulations;
 

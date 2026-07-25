@@ -1,8 +1,9 @@
 #include <iostream>
 #include <cmath>
 #include <random>
+#include <algorithm>
 #include "../Headers/black76_structs.hpp"
-#include "../Headers/functions.hpp"
+
 
 template <typename F_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 auto monteCarloB76Call(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data, int simulations) -> decltype(data.future)
@@ -16,7 +17,7 @@ auto monteCarloB76Call(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data, i
     for (int i {}; i < simulations; ++i)
     {
         commonType F_final {data.future * std::exp(((data.volatility * W(mt)) - 0.5 * data.volatility * data.volatility * data.maturity))};
-        payoffs += max(F_final - data.strike, static_cast<commonType>(0));
+        payoffs += std::max(F_final - data.strike, static_cast<commonType>(0));
     }
     payoffs /= simulations;
     
@@ -35,7 +36,7 @@ auto monteCarloB76Put(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data, in
     for (int i {}; i < simulations; ++i)
     {
         commonType F_final {data.future * std::exp(((data.volatility * W(mt)) - 0.5 * data.volatility * data.volatility * data.maturity))};
-        payoffs += max(data.strike - F_final, static_cast<commonType>(0));
+        payoffs += std::max(data.strike - F_final, static_cast<commonType>(0));
     }
     payoffs /= simulations;
     
