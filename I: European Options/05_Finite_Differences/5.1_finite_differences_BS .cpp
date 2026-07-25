@@ -145,7 +145,7 @@ template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T
 auto finiteDifferencesCallBS(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, const int M, const int N, const double multiplier=4.0)
 {
     using commonType = decltype(data.spot);
-    commonType Smax {multiplier * max(data.spot,data.strike)};
+    commonType Smax {multiplier * std::max(data.spot,data.strike)};
     commonType deltaS {Smax / static_cast<commonType>(M)};
     commonType deltaT {data.maturity / static_cast<commonType>(N)};
     std::vector<commonType> S (M + 1);
@@ -157,7 +157,7 @@ auto finiteDifferencesCallBS(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& da
     std::vector<commonType> V (M + 1);
     for (int i{}; i < M + 1; ++i)
     {
-        V[i] = max(S[i] - data.strike, static_cast<double>(0));
+        V[i] = std::max(S[i] - data.strike, static_cast<double>(0));
     }
 
     Coefficients coeff {generateCoefficientsBS(data, deltaS, M)};
@@ -169,7 +169,7 @@ auto finiteDifferencesCallBS(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& da
         std::swap(V_new, V);
     }
     int j {static_cast<int>(data.spot / deltaS)};
-    j = max(static_cast<int>(0), static_cast<int>(min(M-1,static_cast<int>(j))));
+    j = std::max(static_cast<int>(0), static_cast<int>(std::min(M-1,static_cast<int>(j))));
     double price {V[j] + (data.spot - S[j]) * (V[j+1] - V[j]) / (S[j+1] - S[j])};
     return price;
 }
@@ -178,7 +178,7 @@ template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T
 auto finiteDifferencesPutBS(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, const int M, const int N, const double multiplier=4.0)
 {
     using commonType = decltype(data.spot);
-    commonType Smax {multiplier * max(data.spot,data.strike)};
+    commonType Smax {multiplier * std::max(data.spot,data.strike)};
     commonType deltaS {Smax / static_cast<commonType>(M)};
     commonType deltaT {data.maturity / static_cast<commonType>(N)};
     std::vector<commonType> S (M + 1);
@@ -190,7 +190,7 @@ auto finiteDifferencesPutBS(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& dat
     std::vector<commonType> V (M + 1);
     for (int i{}; i < M + 1; ++i)
     {
-        V[i] = max(data.strike - S[i], static_cast<double>(0));
+        V[i] = std::max(data.strike - S[i], static_cast<double>(0));
     }
 
     Coefficients coeff {generateCoefficientsBS(data, deltaS, M)};
@@ -202,7 +202,7 @@ auto finiteDifferencesPutBS(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& dat
         std::swap(V_new, V);
     }
     int j {static_cast<int>(data.spot / deltaS)};
-    j = max(static_cast<int>(0), static_cast<int>(min(M-1,static_cast<int>(j))));
+    j = std::max(static_cast<int>(0), static_cast<int>(std::min(M-1,static_cast<int>(j))));
     double price {V[j] + (data.spot - S[j]) * (V[j+1] - V[j]) / (S[j+1] - S[j])};
     return price;
 }

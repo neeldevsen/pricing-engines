@@ -20,7 +20,7 @@ auto trinomialTreeBSCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, 
     std::vector<commonType> V_current (2 * N + 1);
     for (int j {}; j < 2 * N + 1; ++j)
         {
-            V_current[j] = max(data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j- N)) - data.strike, static_cast<commonType>(0));
+            V_current[j] = std::max(data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j- N)) - data.strike, static_cast<commonType>(0));
         }
 
     for (int i {}; i < N ; ++i)
@@ -51,7 +51,7 @@ auto trinomialTreeBSPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, c
     std::vector<commonType> V_current (2 * N + 1);
     for (int j {}; j < 2 * N + 1; ++j)
         {
-            V_current[j] = max(data.strike - data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j- N)), static_cast<commonType>(0));
+            V_current[j] = std::max(data.strike - data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j- N)), static_cast<commonType>(0));
         }
 
     for (int i {}; i < N ; ++i)

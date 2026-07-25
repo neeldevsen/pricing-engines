@@ -2,7 +2,7 @@
 #include <cmath>
 #include <vector>
 #include <type_traits>
-#include "../Headers/functions.hpp"
+#include <algorithm>
 #include "../Headers/black_scholes_struct.hpp"
 
 
@@ -138,7 +138,7 @@ std::vector<double> stepCrankNicolson(std::vector<double>& A_lower, std::vector<
 
 double solveEuroCallCrankNicolson(double St, double K, double r, double sigma, double T, int M, int N, double multiplier=4.0)
 {
-    double Smax {multiplier * max(St,K)};
+    double Smax {multiplier * std::max(St,K)};
     double deltaS {Smax / M};
     double deltaT {T / N};
     std::vector<double> S (M + 1);
@@ -150,7 +150,7 @@ double solveEuroCallCrankNicolson(double St, double K, double r, double sigma, d
     std::vector<double> V (M + 1);
     for (int i{}; i < M + 1; ++i)
     {
-        V[i] = max(S[i] - K, static_cast<double>(0));
+        V[i] = std::max(S[i] - K, static_cast<double>(0));
     }
     std::vector<double> alphas = generateAlphas(sigma, Smax, M, r);
     std::vector<double> betas = generateBetas(sigma, Smax, M, r);
@@ -166,7 +166,7 @@ double solveEuroCallCrankNicolson(double St, double K, double r, double sigma, d
         std::swap(V_new, V);
     }
     int j {static_cast<int>(St / deltaS)};
-    j = max(static_cast<int>(0), static_cast<int>(min(M-1,static_cast<int>(j))));
+    j = std::max(static_cast<int>(0), static_cast<int>(std::min(M-1,static_cast<int>(j))));
     double price {V[j] + (St - S[j]) * (V[j+1] - V[j]) / (S[j+1] - S[j])};
     return price;
 }

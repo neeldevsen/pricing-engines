@@ -2,7 +2,7 @@
 #include <cmath>
 #include <vector>
 #include <type_traits>
-#include "../Headers/functions.hpp"
+#include <algorithm>
 #include "../Headers/black76_structs.hpp"
 
 template <typename F_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
@@ -20,7 +20,7 @@ auto trinomialTreeB76Call(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data
     std::vector<commonType> V_current (2 * N + 1);
     for (int j {}; j < 2 * N + 1; ++j)
         {
-            V_current[j] = max(data.future * std::pow(static_cast<double>(u) , static_cast<double>(j- N)) - data.strike, static_cast<commonType>(0));
+            V_current[j] = std::max(data.future * std::pow(static_cast<double>(u) , static_cast<double>(j- N)) - data.strike, static_cast<commonType>(0));
         }
 
     for (int i {}; i < N ; ++i)
@@ -51,7 +51,7 @@ auto trinomialTreeB76Put(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data,
     std::vector<commonType> V_current (2 * N + 1);
     for (int j {}; j < 2 * N + 1; ++j)
         {
-            V_current[j] = max(data.strike - data.future * std::pow(static_cast<double>(u) , static_cast<double>(j- N)), static_cast<commonType>(0));
+            V_current[j] = std::max(data.strike - data.future * std::pow(static_cast<double>(u) , static_cast<double>(j- N)), static_cast<commonType>(0));
         }
 
     for (int i {}; i < N ; ++i)

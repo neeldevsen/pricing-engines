@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <type_traits>
-#include "../Headers/functions.hpp"
+#include <algorithm>
 #include "../Headers/black_scholes_struct.hpp"
 
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
@@ -18,7 +18,7 @@ auto binomialTreeBSCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, c
 
     for (int j {}; j <= N; ++j)
     {
-        sum += binomial(N,j) * std::pow(p, j) * std::pow(1-p, N-j) * max(data.spot * std::pow(u, j) * std::pow(d, N-j) - data.strike , static_cast<commonType>(0));
+        sum += binomial(N,j) * std::pow(p, j) * std::pow(1-p, N-j) * std::max(data.spot * std::pow(u, j) * std::pow(d, N-j) - data.strike , static_cast<commonType>(0));
     }
     return sum * std::exp(-data.rate * data.maturity);
 }
@@ -37,7 +37,7 @@ auto binomialTreeBSPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, co
 
     for (int j {}; j <= N; ++j)
     {
-        sum += binomial(N,j) * std::pow(p, j) * std::pow(1-p, N-j) * max(data.strike - data.spot * std::pow(u, j) * std::pow(d, N-j), static_cast<commonType>(0));
+        sum += binomial(N,j) * std::pow(p, j) * std::pow(1-p, N-j) * std::max(data.strike - data.spot * std::pow(u, j) * std::pow(d, N-j), static_cast<commonType>(0));
     }
     return sum * std::exp(-data.rate * data.maturity);
 }

@@ -911,25 +911,14 @@ When we use a Monte Carlo Simulation we simulate a lot of these values for $S_T$
 where $e^{-r(T-t)}$ is the discount factor and $S_T$ is the same as defined in Equation \ref{eq:gbm-terminal-stock-price}
 In order to simulate the Wiener function, we use Equation \ref{wiener}
 \newpage
-The \textbf{max} function is also a part of the header \href{https://github.com/neeldevsen/pricingengines/blob/main/I%3A%20European%20Options/Headers/functions.hpp}{\textbf{functions.hpp}} and is defined as:
-\begin{listing}[ht]
-	\begin{minted}{cpp}
-		template <typename T>
-		auto max(T x, T y) -> std::common_type_t <double, T>
-		{ return x > y ? x : y; }
-	\end{minted}
-	\caption{Max Function}
-	\label{lst:max}
-\end{listing}
-\FloatBarrier
-This function uses the ternary operator \textbf{?} to return whichever value from \textbf{x} and \textbf{y} is greater. This is needed for the Monte Carlo simulation below:
+
 \begin{listing}[H]
 	\begin{minted}{cpp}
 		#include <cmath>
 		#include <random>
+		#include <algorithm>
 		#include "../Headers/black_scholes_struct.hpp"
-		#include "../Headers/functions.hpp"
-		
+
 		template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 		auto monteCarloBSCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int simulations) -> decltype(data.spot)
 		{
@@ -942,7 +931,7 @@ This function uses the ternary operator \textbf{?} to return whichever value fro
 			for (int i {}; i < simulations; ++i)
 			{
 				commonType S_final {data.spot * std::exp((data.rate - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
-				payoffs += max(S_final - data.strike, static_cast<commonType>(0));
+				payoffs += std::max(S_final - data.strike, static_cast<commonType>(0));
 			}
 			payoffs /= simulations;
 			
@@ -971,8 +960,8 @@ where $e^{-r(T-t)}$ is the discount factor and $S_T$ is the same as defined in E
 	\begin{minted}{cpp}
 		#include <cmath>
 		#include <random>
+		#include <algorithm>
 		#include "../Headers/black_scholes_struct.hpp"
-		#include "../Headers/functions.hpp"
 		
 		template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 		auto monteCarloBSPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int simulations) -> decltype(data.spot)
@@ -986,7 +975,7 @@ where $e^{-r(T-t)}$ is the discount factor and $S_T$ is the same as defined in E
 			for (int i {}; i < simulations; ++i)
 			{
 				commonType S_final {data.spot * std::exp((data.rate - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
-				payoffs += max(data.strike - S_final , static_cast<commonType>(0));
+				payoffs += std::max(data.strike - S_final , static_cast<commonType>(0));
 			}
 			payoffs /= simulations;
 			
@@ -1095,9 +1084,9 @@ In order to simulate the Wiener function, we use Equation \ref{wiener}
 	\begin{minted}{cpp}
 		#include <cmath>
 		#include <random>
+		#include <algorithm>
 		#include "../Headers/black76_structs.hpp"
-		#include "../Headers/functions.hpp"
-		
+
 		template <typename F_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 		auto monteCarloB76Call(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data, int simulations) -> decltype(data.future)
 		{
@@ -1110,7 +1099,7 @@ In order to simulate the Wiener function, we use Equation \ref{wiener}
 			for (int i {}; i < simulations; ++i)
 			{
 				commonType F_final {data.future * std::exp(((data.volatility * W(mt)) - 0.5 * data.volatility * data.volatility * data.maturity))};
-				payoffs += max(F_final - data.strike, static_cast<commonType>(0));
+				payoffs += std::max(F_final - data.strike, static_cast<commonType>(0));
 			}
 			payoffs /= simulations;
 			
@@ -1140,9 +1129,9 @@ where $e^{-r(T-t)}$ is the discount factor and $F_T$ is the same as defined in E
 	\begin{minted}{cpp}
 		#include <cmath>
 		#include <random>
+		#include <algorithm>
 		#include "../Headers/black76_structs.hpp"
-		#include "../Headers/functions.hpp"
-		
+
 		template <typename F_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 		auto monteCarloB76Put(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data, int simulations) -> decltype(data.future)
 		{
@@ -1155,7 +1144,7 @@ where $e^{-r(T-t)}$ is the discount factor and $F_T$ is the same as defined in E
 			for (int i {}; i < simulations; ++i)
 			{
 				commonType F_final {data.future * std::exp(((data.volatility * W(mt)) - 0.5 * data.volatility * data.volatility * data.maturity))};
-				payoffs += max(data.strike - F_final, static_cast<commonType>(0));
+				payoffs += std::max(data.strike - F_final, static_cast<commonType>(0));
 			}
 			payoffs /= simulations;
 			
@@ -1276,8 +1265,8 @@ Implementing the call option pricer in C++ like this:
 	\begin{minted}{cpp}
 		#include <cmath>
 		#include <random>
+		#include <algorithm>
 		#include "../Headers/merton_struct.hpp"
-		#include "../Headers/functions.hpp"
 		
 		template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>
 		auto monteCarloMertonCall(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>& data, int simulations) -> decltype(data.spot)
@@ -1291,7 +1280,7 @@ Implementing the call option pricer in C++ like this:
 			for (int i {}; i < simulations; ++i)
 			{
 				commonType S_final {data.spot * std::exp((data.rate - data.dividend - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
-				payoffs += max(S_final - data.strike, static_cast<commonType>(0));
+				payoffs += std::max(S_final - data.strike, static_cast<commonType>(0));
 			}
 			payoffs /= simulations;
 			
@@ -1319,8 +1308,8 @@ where $S_T$ is the same as defined in Equation \ref{eq:merton-terminal-stock-pri
 	\begin{minted}{cpp}
 		#include <cmath>
 		#include <random>
+		#include <algorithm>
 		#include "../Headers/merton_struct.hpp"
-		#include "../Headers/functions.hpp"
 		
 		template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>
 		auto monteCarloMertonPut(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>& data, int simulations) -> decltype(data.spot)
@@ -1334,7 +1323,7 @@ where $S_T$ is the same as defined in Equation \ref{eq:merton-terminal-stock-pri
 			for (int i {}; i < simulations; ++i)
 			{
 				commonType S_final {data.spot * std::exp((data.rate - data.dividend - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
-				payoffs += max(data.strike - S_final, static_cast<commonType>(0));
+				payoffs += std::max(data.strike - S_final, static_cast<commonType>(0));
 			}
 			payoffs /= simulations;
 			
@@ -1582,7 +1571,7 @@ For a put European Put option, the terminal payoffs are:
 			std::vector<commonType> V_current (N + 1);
 			for (int j {}; j < N + 1; ++j)
 			{
-				V_current[j] = max(data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j)) * std::pow(static_cast<double>(d), static_cast<double>(N-j)) - data.strike , static_cast<commonType>(0));
+				V_current[j] = std::max(data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j)) * std::pow(static_cast<double>(d), static_cast<double>(N-j)) - data.strike , static_cast<commonType>(0));
 			}
 			
 			for (int i {}; i < N ; ++i)
@@ -1629,7 +1618,7 @@ Since we take the term with the highest order and exclude constants, the final t
 		#include <cmath>
 		#include <vector>
 		#include <type_traits>
-		#include "../Headers/functions.hpp"
+		#include <algorithm>
 		#include "../Headers/black76_structs.hpp"
 		
 		template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
@@ -1645,7 +1634,7 @@ Since we take the term with the highest order and exclude constants, the final t
 			std::vector<commonType> V_current (N + 1);
 			for (int j {}; j < N + 1; ++j)
 			{
-				V_current[j] = max(data.strike - data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j)) * std::pow(static_cast<double>(d), static_cast<double>(N-j)) , static_cast<commonType>(0));
+				V_current[j] = std::max(data.strike - data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j)) * std::pow(static_cast<double>(d), static_cast<double>(N-j)) , static_cast<commonType>(0));
 			}
 			
 			for (int i {}; i < N ; ++i)
@@ -1812,7 +1801,7 @@ For a put European Put option, the terminal payoffs are:
 		#include <cmath>
 		#include <vector>
 		#include <type_traits>
-		#include "../Headers/functions.hpp"
+		#include <algorithm>
 		#include "../Headers/black_scholes_struct.hpp"
 		
 		template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
@@ -1828,7 +1817,7 @@ For a put European Put option, the terminal payoffs are:
 			std::vector<commonType> V_current (N + 1);
 			for (int j {}; j < N + 1; ++j)
 			{
-				V_current[j] = max(data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j)) * std::pow(static_cast<double>(d), static_cast<double>(N-j)) - data.strike , static_cast<commonType>(0));
+				V_current[j] = std::max(data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j)) * std::pow(static_cast<double>(d), static_cast<double>(N-j)) - data.strike , static_cast<commonType>(0));
 			}
 			
 			for (int i {}; i < N ; ++i)
