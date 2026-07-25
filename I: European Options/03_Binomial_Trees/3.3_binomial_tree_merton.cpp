@@ -6,7 +6,7 @@
 #include "../Headers/merton_struct.hpp"
 
 template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>
-auto binomialTreeBSCall(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>& data, const int N) -> decltype(data.spot)
+auto binomialTreeMertonCall(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>& data, const int N) -> decltype(data.spot)
 {
     using commonType = decltype(data.spot);
     
@@ -37,7 +37,7 @@ auto binomialTreeBSCall(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>
 }
 
 template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>
-auto binomialTreeBSPut(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>& data, const int N) -> decltype(data.spot)
+auto binomialTreeMertonPut(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>& data, const int N) -> decltype(data.spot)
 {
     using commonType = decltype(data.spot);
     
@@ -70,8 +70,8 @@ int main()
 {
     OptionDataMerton myOption {100, 100, 0.01, 0.03, 0.3, 30};
     int iterations {10000};
-    std::cout << "Call price: $" << binomialTreeBSCall(myOption, 10000) << '\n';
-    std::cout << "Put price: $" << binomialTreeBSPut(myOption, 10000) << '\n';
+    std::cout << "Call price: $" << binomialTreeMertonCall(myOption, 10000) << '\n';
+    std::cout << "Put price: $" << binomialTreeMertonPut(myOption, 10000) << '\n';
 
 
     return 0;  

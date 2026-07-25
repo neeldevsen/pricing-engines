@@ -19,7 +19,7 @@ auto binomialTreeBSCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, c
     std::vector<commonType> V_current (N + 1);
     for (int j {}; j < N + 1; ++j)
         {
-            V_current[j] = std::max(data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j)) * std::pow(static_cast<double>(d), static_cast<double>(N-j)) - data.strike , static_cast<commonType>(0));
+            V_current[j] = std::max(data.spot * std::pow(static_cast<commonType>(u) , static_cast<commonType>(j)) * std::pow(static_cast<commonType>(d), static_cast<commonType>(N-j)) - data.strike , static_cast<commonType>(0));
         }
 
     for (int i {}; i < N ; ++i)
@@ -50,7 +50,7 @@ auto binomialTreeBSPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, co
     std::vector<commonType> V_current (N + 1);
     for (int j {}; j < N + 1; ++j)
         {
-            V_current[j] = std::max(data.strike - data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j)) * std::pow(static_cast<double>(d), static_cast<double>(N-j)) , static_cast<commonType>(0));
+            V_current[j] = std::max(data.strike - data.spot * std::pow(static_cast<commonType>(u) , static_cast<commonType>(j)) * std::pow(static_cast<commonType>(d), static_cast<commonType>(N-j)) , static_cast<commonType>(0));
         }
 
     for (int i {}; i < N ; ++i)
