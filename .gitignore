@@ -5,3 +5,6 @@
 *.synctex.gz
 *.pygtex
 *.bib
+*.tex
+*.pygstyle
+
