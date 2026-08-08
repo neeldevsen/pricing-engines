@@ -13,7 +13,7 @@ pricing-engines/
 ├── LICENSE
 ├── .gitignore
 ├── PricingEngines.pdf
-├── SupplementaryEngines.pdf
+├── SupplementEngines.pdf
 │
 ├── I_Classical_Models_and_Methods/
 │   ├── 01_Closed_Forms/
