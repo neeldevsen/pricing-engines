@@ -6,9 +6,9 @@ So far implemented:
 - Trinomial Trees
 - Finite Difference Methods
 
+```text
 The directory structure is shown below:
 pricing-engines/
-one-pricer-a-day/
 ├── README.md
 ├── LICENSE
 ├── .gitignore
@@ -20,7 +20,7 @@ one-pricer-a-day/
 │   ├── 04_Trinomial_Trees/
 │   ├── 05_Finite_Differences/
 │   ├── Headers/
-
+```
 ## Build
 
 This project uses C++20.
