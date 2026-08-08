@@ -15,7 +15,6 @@ std::vector<double> generateAlphas(double sigma, double S_max, int M, double r)
     {
         double S_i {(i+1)*deltaS};
         alphas[i] = 0.5 * (std::pow(sigma*S_i, 2.0)) / (std::pow(deltaS, 2.0)) - (r*S_i) / (2*deltaS);
-
     }
     return alphas;
 }
@@ -28,7 +27,6 @@ std::vector<double> generateBetas(double sigma, double S_max, int M, double r)
     {
         double S_i {(i+1)*deltaS};
         betas[i] = -(std::pow(sigma*S_i, 2.0)) / (std::pow(deltaS, 2.0)) - r;
-
     }
     return betas;
 }
@@ -118,11 +116,11 @@ std::vector<double> thomasAlgorithm(std::vector<double>& A_lower, std::vector<do
         rho_p[i] = rho[i] / (1.0 - eta[i] * rho_p[i-1]);
     }
     
-    std::vector<double> Vn (M-1);
-    Vn[M-2] = mu_p[M-2];
-    for (int i{M-3}; i >= 0; --i)
+    std::vector<double> Vn (M);
+    Vn[M-1] = mu_p[M-2];
+    for (int i{M-2}; i >= 1; --i)
     {
-        Vn[i] = mu_p[i] - rho_p[i] * Vn[i+1];
+        Vn[i] = mu_p[i-1] - rho_p[i-1] * Vn[i+1];
     }
     return Vn;
 }
@@ -131,7 +129,7 @@ std::vector<double> stepCrankNicolson(std::vector<double>& A_lower, std::vector<
 {
     std::vector<double> RHS{generateRHS(alphas, betas, gammas, V, deltaT, M, K, n, r, Smax)};
     std::vector<double> V_next {thomasAlgorithm(A_lower, A_main, A_upper, RHS)};
-    V_next.insert(V_next.begin(), 0); // changes for put
+    V_next[0] = 0;
     V_next.push_back(Smax - K * std::exp(-r*deltaT*(n+1)));
     return V_next;  
 }

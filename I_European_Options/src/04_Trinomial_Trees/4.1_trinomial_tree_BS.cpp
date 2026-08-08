@@ -2,7 +2,7 @@
 #include <cmath>
 #include <vector>
 #include <type_traits>
-#include "../Headers/functions.hpp"
+#include <algorithm>
 #include "../Headers/black_scholes_struct.hpp"
 
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
@@ -20,7 +20,7 @@ auto trinomialTreeBSCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, 
     std::vector<commonType> V_current (2 * N + 1);
     for (int j {}; j < 2 * N + 1; ++j)
         {
-            V_current[j] = std::max(data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j- N)) - data.strike, static_cast<commonType>(0));
+            V_current[j] = std::max(data.spot * std::pow(static_cast<commonType>(u) , static_cast<commonType>(j- N)) - data.strike, static_cast<commonType>(0));
         }
 
     for (int i {}; i < N ; ++i)
@@ -51,7 +51,7 @@ auto trinomialTreeBSPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, c
     std::vector<commonType> V_current (2 * N + 1);
     for (int j {}; j < 2 * N + 1; ++j)
         {
-            V_current[j] = std::max(data.strike - data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j- N)), static_cast<commonType>(0));
+            V_current[j] = std::max(data.strike - data.spot * std::pow(static_cast<commonType>(u) , static_cast<commonType>(j- N)), static_cast<commonType>(0));
         }
 
     for (int i {}; i < N ; ++i)

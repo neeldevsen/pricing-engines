@@ -31,7 +31,6 @@ struct Diagonals
     {}
 };
 
-
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 Coefficients<S_t, K_t, r_t, sigma_t, T_t> generateCoefficientsBS(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, const auto deltaS, const int M)
 {
@@ -91,7 +90,6 @@ auto generateRHSPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, Coeff
     return RHS; 
 }
 
-
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 auto thomasAlgorithm(Diagonals<S_t, K_t, r_t, sigma_t, T_t>& diag, const auto& RHS, const int M)
 {
@@ -111,9 +109,9 @@ auto thomasAlgorithm(Diagonals<S_t, K_t, r_t, sigma_t, T_t>& diag, const auto& R
 
     std::vector<commonType> Vn (M-1);
     Vn[M-2] = mu_p[M-2];
-    for (int i{M-3}; i >= 0; --i)
+    for (int i{M-2}; i >= 1; --i)
     {
-        Vn[i] = mu_p[i] - rho_p[i] * Vn[i+1];
+        Vn[i] = mu_p[i-1] - rho_p[i-1] * Vn[i+1];
     }
     return Vn;
 }
@@ -124,7 +122,7 @@ auto stepCrankNicolsonCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data
     using commonType = decltype(data.spot);
     std::vector<commonType> RHS{generateRHSCall(data, coeff, V, n, M, deltaT, Smax)};
     std::vector<commonType> V_next {thomasAlgorithm(diag, RHS, M)};
-    V_next.insert(V_next.begin(), 0); 
+    V_next[0] = 0 
     V_next.push_back(Smax - data.strike * std::exp(-data.rate*deltaT*(static_cast<commonType>(n+1))));
     return V_next;  
 }
@@ -135,11 +133,10 @@ auto stepCrankNicolsonPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data,
     using commonType = decltype(data.spot);
     std::vector<commonType> RHS{generateRHSPut(data, coeff, V, n, M, deltaT, Smax)};
     std::vector<commonType> V_next {thomasAlgorithm(diag, RHS, M)};
-    V_next.insert(V_next.begin(), data.strike * std::exp(-data.rate*deltaT*(static_cast<commonType>(n+1)))); 
+    V_next[0] = data.strike * std::exp(-data.rate*deltaT*(static_cast<commonType>(n+1))); 
     V_next.push_back(0);
     return V_next;  
 }
-
 
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 auto finiteDifferencesCallBS(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, const int M, const int N, const double multiplier=4.0)
@@ -218,3 +215,4 @@ int main()
 
     return 0;
 }
+

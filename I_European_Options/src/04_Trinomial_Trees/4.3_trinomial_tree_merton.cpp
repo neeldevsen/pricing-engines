@@ -20,7 +20,7 @@ auto trinomialTreeMertonCall(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t,
     std::vector<commonType> V_current (2 * N + 1);
     for (int j {}; j < 2 * N + 1; ++j)
         {
-            V_current[j] = std::max(data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j- N)) - data.strike, static_cast<commonType>(0));
+            V_current[j] = std::max(data.spot * std::pow(static_cast<commonType>(u) , static_cast<commonType>(j- N)) - data.strike, static_cast<commonType>(0));
         }
 
     for (int i {}; i < N ; ++i)
@@ -51,7 +51,7 @@ auto trinomialTreeMertonPut(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, 
     std::vector<commonType> V_current (2 * N + 1);
     for (int j {}; j < 2 * N + 1; ++j)
         {
-            V_current[j] = std::max(data.strike - data.spot * std::pow(static_cast<double>(u) , static_cast<double>(j- N)), static_cast<commonType>(0));
+            V_current[j] = std::max(data.strike - data.spot * std::pow(static_cast<commonType>(u) , static_cast<commonType>(j- N)), static_cast<commonType>(0));
         }
 
     for (int i {}; i < N ; ++i)
