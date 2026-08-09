@@ -107,7 +107,7 @@ auto thomasAlgorithm(Diagonals<S_t, K_t, r_t, sigma_t, T_t>& diag, const auto& R
     }
     mu_p[M-2] = (RHS[M-2] / diag.A_main[M-2] - diag.A_lower[M-3] / diag.A_main[M-2] * mu_p[M-3]) / (static_cast<commonType>(1) - diag.A_lower[M-3] / diag.A_main[M-2] * rho_p[M-3]);
 
-    std::vector<commonType> Vn (M-1);
+    std::vector<commonType> Vn (M);
     Vn[M-2] = mu_p[M-2];
     for (int i{M-2}; i >= 1; --i)
     {
@@ -122,7 +122,7 @@ auto stepCrankNicolsonCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data
     using commonType = decltype(data.spot);
     std::vector<commonType> RHS{generateRHSCall(data, coeff, V, n, M, deltaT, Smax)};
     std::vector<commonType> V_next {thomasAlgorithm(diag, RHS, M)};
-    V_next[0] = 0 
+    V_next[0] = 0;
     V_next.push_back(Smax - data.strike * std::exp(-data.rate*deltaT*(static_cast<commonType>(n+1))));
     return V_next;  
 }
