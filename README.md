@@ -6,8 +6,9 @@ So far implemented:
 - Trinomial Trees
 - Finite Difference Methods
 
-```text
 The directory structure is shown below:
+```text
+
 pricing-engines/
 ├── README.md
 ├── LICENSE
