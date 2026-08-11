@@ -3,7 +3,7 @@
 #include <vector>
 #include <type_traits>
 #include <algorithm>
-#include "../Headers/black76_structs.hpp"
+#include "../../Headers/black76_structs.hpp"
 
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 struct Coefficients

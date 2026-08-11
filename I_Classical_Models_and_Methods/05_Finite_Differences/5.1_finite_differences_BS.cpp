@@ -2,8 +2,7 @@
 #include <cmath>
 #include <vector>
 #include <type_traits>
-#include "../Headers/functions.hpp"
-#include "../Headers/black_scholes_struct.hpp"
+#include "../../Headers/black_scholes_struct.hpp"
 
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 struct Coefficients

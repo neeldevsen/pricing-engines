@@ -3,7 +3,7 @@
 #include <vector>
 #include <type_traits>
 #include <algorithm>
-#include "../Headers/black76_structs.hpp"
+#include "../../Headers/black76_structs.hpp"
 
 template <typename F_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 auto binomialTreeB76Call(const OptionDataB76<F_t, K_t, r_t, sigma_t, T_t>& data, const int N) -> decltype(data.future)

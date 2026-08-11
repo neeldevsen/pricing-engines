@@ -2,8 +2,8 @@
 #include <cmath>
 #include <type_traits>
 #include <iomanip>
-#include "../Headers/functions.hpp"
-#include "../Headers/black_scholes_struct.hpp"
+#include "../../Headers/functions.hpp"
+#include "../../Headers/black_scholes_struct.hpp"
 
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 auto blackScholesCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data) -> decltype(data.spot)

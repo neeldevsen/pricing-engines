@@ -3,7 +3,7 @@
 #include <vector>
 #include <type_traits>
 #include <algorithm>
-#include "../Headers/black_scholes_struct.hpp"
+#include "../../Headers/black_scholes_struct.hpp"
 
 
 

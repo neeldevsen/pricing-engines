@@ -3,7 +3,7 @@
 #include <vector>
 #include <type_traits>
 #include <algorithm>
-#include "../Headers/merton_struct.hpp"
+#include "../../Headers/merton_struct.hpp"
 
 template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>
 auto trinomialTreeMertonCall(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>& data, const int N) -> decltype(data.spot)

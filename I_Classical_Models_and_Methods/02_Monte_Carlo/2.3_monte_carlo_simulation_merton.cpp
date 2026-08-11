@@ -1,8 +1,8 @@
 #include <iostream>
 #include <cmath>
 #include <random>
-#include "../Headers/merton_struct.hpp"
-#include "../Headers/functions.hpp"
+#include "../../Headers/merton_struct.hpp"
+#include "../../Headers/functions.hpp"
 
 template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>
 auto monteCarloMertonCall(const OptionDataMerton<S_t, K_t, r_t, q_t, sigma_t, T_t>& data, int simulations) -> decltype(data.spot)

@@ -3,7 +3,7 @@
 #include <vector>
 #include <type_traits>
 #include <algorithm>
-#include "../Headers/merton_struct.hpp"
+#include "../../Headers/merton_struct.hpp"
 
 template <typename S_t, typename K_t, typename r_t, typename q_t, typename sigma_t, typename T_t>
 struct Diagonals
