@@ -5,6 +5,8 @@ So far implemented:
 - Binomial Trees
 - Trinomial Trees
 - Finite Difference Methods
+- Heston Model
+- Merton's Jump Diffusion Model
 
 The directory structure is shown below:
 ```text
