@@ -15,4 +15,20 @@ inline double binomial(int n, int k)
 {
     return 1/((n+1)*std::beta(n-k+1,k+1));
 }
+
+
+inline int factorial(int n)
+{
+    int value {1};
+    if (n == 0)
+    {
+        return 1;
+    }
+    for (int i{1}; i <= n; ++i)
+    {
+        value *= i;
+    }
+    return value;
+}
 #endif
+

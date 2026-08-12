@@ -38,14 +38,6 @@ auto jumpDiffusionEulerSimCall(OptionDataJD<S_t, K_t, r_t, sigma_t, T_t, lambda_
     return std::exp(-data.rate * data.maturity) * std::accumulate(payoffs.begin(), payoffs.end(), static_cast<commonType>(0)) /static_cast<commonType>(payoffs.size());
 }
 
-#include <iostream>
-#include <cmath>
-#include <random>
-#include <algorithm>
-#include <vector>
-#include <numeric>
-#include "../../Headers/jump_diffusion_struct.hpp"
-
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t, typename lambda_t, typename mu_t, typename j_t>
 auto jumpDiffusionEulerSimPut(OptionDataJD<S_t, K_t, r_t, sigma_t, T_t, lambda_t, mu_t, j_t>& data, int M, int N)
 {
@@ -76,4 +68,12 @@ auto jumpDiffusionEulerSimPut(OptionDataJD<S_t, K_t, r_t, sigma_t, T_t, lambda_t
 
     std::transform(stocks.begin(), stocks.end(), payoffs.begin(), [&data](commonType S){return std::max(data.strike - S, static_cast<commonType>(0));});
     return std::exp(-data.rate * data.maturity) * std::accumulate(payoffs.begin(), payoffs.end(), static_cast<commonType>(0)) /static_cast<commonType>(payoffs.size());
+}
+
+int main()
+{
+    OptionDataJD values {100, 100, 0.05 ,0.20, 1, 0.75, -0.10, 0.25};
+
+    std::cout << jumpDiffusionEulerSimCall(values, 100000, 100) << '\n';
+    std::cout << jumpDiffusionEulerSimPut(values, 100000, 100) << '\n';
 }
