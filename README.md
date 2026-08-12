@@ -6,8 +6,9 @@ So far implemented:
 - Trinomial Trees
 - Finite Difference Methods
 
-```text
 The directory structure is shown below:
+```text
+
 pricing-engines/
 ├── README.md
 ├── LICENSE
@@ -15,16 +16,20 @@ pricing-engines/
 ├── PricingEngines.pdf
 ├── SupplementEngines.pdf
 │
+├── Headers/
+│
 ├── I_Classical_Models_and_Methods/
 │   ├── 01_Closed_Forms/
 │   ├── 02_Monte_Carlo/
 │   ├── 03_Binomial_Trees/
 │   ├── 04_Trinomial_Trees/
 │   ├── 05_Finite_Differences/
-│   ├── Headers/
+│
 ├── II_Advanced_Models/
 │   ├── 06_Heston/
-│   ├── Headers/
+│   ├── 07_Jump_Diffusion/
+
+
 ```
 ## Build
 
