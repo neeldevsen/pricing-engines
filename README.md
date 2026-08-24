@@ -17,6 +17,7 @@ pricing-engines/
 ├── .gitignore
 ├── PricingEngines.pdf
 ├── SupplementEngines.pdf
+├── ConvegenceStudy.pdf
 │
 ├── Headers/
 │
@@ -30,6 +31,17 @@ pricing-engines/
 ├── II_Advanced_Models/
 │   ├── 06_Heston/
 │   ├── 07_Jump_Diffusion/
+│
+├── Calibration/
+│
+├── I_Convergence_Study/
+│   ├── C++/
+│   ├── Data-Analysis/
+│   ├── Excels/
+│   ├── Experiments/
+│   ├── Images/
+
+
 
 
 ```
