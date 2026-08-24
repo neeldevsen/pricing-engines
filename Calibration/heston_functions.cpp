@@ -6,7 +6,6 @@
 #include <numeric>
 #include "../Headers/heston_struct.hpp"
 #include <pybind11/pybind11.h>
-#include <thread>
 
 namespace py = pybind11;
 

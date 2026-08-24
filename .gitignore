@@ -8,5 +8,7 @@
 *.tex
 *.pygstyle
 *.json
+*.so
+
 
 

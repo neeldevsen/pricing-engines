@@ -23,9 +23,6 @@ now = datetime.now(timezone.utc)
 for i in range(0,len(maturities)):
     maturities[i] = (datetime.strptime(expiry_dates[i], "%Y-%m-%d").replace(tzinfo=timezone.utc) - now).total_seconds() / 31536000
 
-print(call_data["strike"])
-print(call_data["ask"])
-print(call_data["bid"])
 strikes_grid = np.full((len(expiry_dates), 20), np.nan)
 prices_grid = np.full((len(expiry_dates), 20), np.nan)
 
