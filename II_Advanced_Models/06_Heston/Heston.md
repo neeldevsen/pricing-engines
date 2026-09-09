@@ -208,7 +208,7 @@ where $\gamma_1, \gamma_2$ are weighting parameters which satisfy $\gamma_1 + \g
 
 ![Heston variance comparison](./volatilitycomparison.png)
 
-As you can see, the volatility of the Euler scheme becomes NaN pretty early (since $\sqrt{-x}$ doesn't exist), while the others continue since they make sure negative variances cannot exist. All of them stay around the same long run volatility of $\theta = 0.4$
+As you can see, the volatility of the Euler scheme becomes NaN pretty early (since $\sqrt{-x}$ doesn't exist), while the others continue since they make sure negative variances cannot exist. All of them stay around the same long run variance of $\theta = 0.4$
 
 The other parameters used for this graph are:
 $\rho = -0.7$, $\kappa = 0.2$, $\xi = 0.3$, $N = 252$ and $M = 1,000,000$
