@@ -25,7 +25,7 @@ auto hestonNaiveEulerCall(OptionDataHeston<S_t, K_t, r_t, T_t, v_t, kappa_t, the
         {
             commonType Z1 {W1(mt)};
             commonType Z3 {W3(mt)};
-            commonType Z2{data.rho * Z1 + std::sqrt(1- data.rho * data.rho) * Z2};
+            commonType Z2{data.rho * Z1 + std::sqrt(1- data.rho * data.rho) * Z3};
             stock[i] += data.rate * stock[i] * deltaT + stock[i] * std::sqrt(variance * deltaT) * Z1;
             variance += data.kappa * (data.theta - variance) * deltaT + data.xi * std::sqrt(variance * deltaT) * Z2;
         }
