@@ -1,5 +1,5 @@
-#ifndef GBMOPTIONS
-#define GBMOPTIONS
+#ifndef BSSTRUCT
+#define BSSTRUCT
 #include <type_traits>
 
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
@@ -16,3 +16,4 @@ struct OptionDataBS
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
 OptionDataBS(S_t, K_t, r_t, sigma_t, T_t) -> OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>;
 #endif
+
