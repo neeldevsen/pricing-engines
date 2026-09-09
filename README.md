@@ -84,9 +84,11 @@ $$
 ## 6.1 Heston with the Euler-Maruyama Discretisation
 
 The Euler-Maruyama discretisation says that for a stochastic differential equation in the form of:
-$$ dX_t = a(X_t, t)dt + b(X_t, t)dW_t $$
+$$dX_t = a(X_t, t)dt + b(X_t, t)dW_t$$
+
 That the solution of $X$ is the Markov chain $Y$ which is defined like this:
-$$ Y_{t+1} = Y_t + a(Y_t, t_n)\Delta t + b(Y_n, t_n)\Delta W_n $$
+$$Y_{t+1} = Y_t + a(Y_t, t_n)\Delta t + b(Y_n, t_n)\Delta W_n$$
+
 where $\Delta W_n = W_{n+1} - W_n$ 
 
 For the Heston SDE the EM-Discretisation can be used like this:
@@ -134,7 +136,7 @@ $$s^2 = \frac{v_t  \xi ^  2 \exp(-\kappa \Delta t) (1 - \exp(-\kappa \Delta t)}{
 $$m = \theta +(v_t - \theta)\exp(-\kappa \Delta t)$$
 4. Calculate $\phi$ with the equation
 $$\phi = \frac{s^2}{m}$$
-5. If $\phi < \operatorname{tolerance}$ start with Step 6, if $\phi \geq \operatorname{tolerance}$ start with Step 9. The most common choice for tolerance is $\operatorname{tolerance} = 1.5$
+5. If $\phi < \phi_c$ start with Step 6, if $\phi \geq \phi_c$ start with Step 9. The most common choice for tolerance is $\phi_c= 1.5$
 6.  Calculate $b^2$ with the equation
 $$b^2 = \frac{2}{\phi} -1 + \sqrt{(\frac{2}{\phi})(\frac{2}{\phi} -1})$$
 7. Calculate $a$ with the equation
