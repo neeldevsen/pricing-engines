@@ -1,12 +1,14 @@
-Please refer to the PDF for all of the derivations and code explanations
+Please refer to the PDFs for all of the derivations and code explanations
 So far implemented:
 - Black Scholes Closed Forms
 - Monte Carlo Simulations
 - Binomial Trees
 - Trinomial Trees
 - Finite Difference Methods
+- Convergence Study
 - Heston Model
 - Merton's Jump Diffusion Model
+- Calibration 
 
 The directory structure is shown below:
 ```text
