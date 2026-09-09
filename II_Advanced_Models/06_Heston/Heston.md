@@ -98,7 +98,7 @@ S_{t+1} = S_t + rS_t \Delta t + \sqrt{\max(v_t, 0)} S_t \sqrt{\Delta t}Z_1 + \fr
 and 
 
 ```math
-v_{t+1} = \max(v_t, 0) + \kappa(\theta - \max(v_t, 0))\Delta t + \xi\sqrt{\max(v_t, 0)}\sqrt{\Delta t}Z_2 + \frac{1}{4}\xi \Delta t (Z_2^2 - 1)
+v_{t+1} = \max(v_t, 0) + \kappa(\theta - \max(v_t, 0))\Delta t + \xi\sqrt{\max(v_t, 0)}\sqrt{\Delta t}Z_2 + \frac{1}{4}\xi^2 \Delta t (Z_2^2 - 1)
 ```
 
 the remaining structure from 6.1 and 6.2 still applies.
@@ -125,7 +125,7 @@ m = \theta +(v_t - \theta)\exp(-\kappa \Delta t)
 4. Calculate $\phi$ with the equation
 
 ```math
-\phi = \frac{s^2}{m}
+\phi = \frac{s^2}{m^2}
 ```
 
 5. If $\phi < \phi_c$ start with Step 6, if $\phi \geq \phi_c$ start with Step 9. The most common choice for tolerance is $\phi_c= 1.5$
@@ -167,7 +167,7 @@ p = \frac{\phi - 1}{\phi + 1}
 13. If $u > p$ then set the variance $v_{t+1}$ using the equation
 
 ```math
-v_{t+1} = -\frac{\log(\frac{1-p}{1-u})}{\beta}
+v_{t+1} = \frac{\log(\frac{1-p}{1-u})}{\beta}
 ```
 
 14. Calculate $X_{t+1}$ using the equation:
