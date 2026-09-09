@@ -1,4 +1,4 @@
-For parts 1-5 please refer to this [PDF1](./PricingEngines.pdf) for subpart 1 and this [PDF2](./SupplementEngines.pdf) for subparts 2 and 3.
+For parts 1-5 please refer to this [PDF1](./PricingEngines.pdf) for the .1 subparts and this [PDF2](./SupplementEngines.pdf) for the .2 and .3 subparts.
 
 So far implemented:
 1. Black Scholes Closed Forms
