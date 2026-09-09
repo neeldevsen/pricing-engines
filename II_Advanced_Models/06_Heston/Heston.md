@@ -3,12 +3,12 @@
 The Heston equation is just another model that accounts for stochastic volatility
 
 The equation of the asset is:
-$$dS_t = rS_t dt + \sqrt{v_t}S_t dW_t^{(1)}$$
+$$dS_t = rS_t dt + \sqrt{v_t}S_t  dW_t^{(1)} a$$
 
 where $v_t$ is the variance of the asset's price (volatility squared $v_t = \sigma^2$)
 
 The equation of the variance throughout time is:
-$$dv_t = \kappa(\theta - v_t)dt + \xi\sqrt{v_t}dW_t^{(2)}$$
+$$dv_t = \kappa(\theta - v_t)dt + \xi\sqrt{v_t}dW_t^{(2)} a$$
 
 Where $\kappa$ is the mean-reversion speed of the variance, $\theta$ is the long run variance, $\xi$ is the volatility of variance
 
