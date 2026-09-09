@@ -1,13 +1,12 @@
-Please refer to the first PDFs for all of the derivations and code explanations
-So far implemented:
-- Black Scholes Closed Forms
-- Monte Carlo Simulations
-- Binomial Trees
-- Trinomial Trees
-- Finite Difference Methods
-- Convergence Study
-- [Heston's Model](./II_Advanced_Models/06_Heston/Heston.md)
-- Merton's Jump Diffusion Model
+For parts 1-5 please refer to this [PDF1](./PricingEngines.pdf) for subpart 1 and this [PDF2](./SupplementEngines.pdf) for subparts 2 and 3.
+1. Black Scholes Closed Forms
+2. Monte Carlo Simulations
+3. Binomial Trees
+4. Trinomial Trees
+5. Finite Difference Methods
+6. [Heston's Model](./II_Advanced_Models/06_Heston/Heston.md)
+7. Merton's Jump Diffusion Model
+- [Convergence Study](./ConvergenceStudy.pdf)
 - Calibration 
 
 The directory structure is shown below:
