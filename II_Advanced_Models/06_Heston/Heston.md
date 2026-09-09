@@ -105,7 +105,7 @@ the remaining structure from 6.1 and 6.2 still applies.
 
 ## 6.4 Heston with Andersen's Quadratic-Exponential Scheme
 
-This model completely destroys the negative variances that the other Heston models might have had.
+This model completely avoids the negative variances that the other Heston models might have had.
 
 The Scheme starts like this:
 
