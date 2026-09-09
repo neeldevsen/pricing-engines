@@ -1,4 +1,6 @@
 For parts 1-5 please refer to this [PDF1](./PricingEngines.pdf) for subpart 1 and this [PDF2](./SupplementEngines.pdf) for subparts 2 and 3.
+
+So far implemented:
 1. Black Scholes Closed Forms
 2. Monte Carlo Simulations
 3. Binomial Trees
