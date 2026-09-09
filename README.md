@@ -62,19 +62,18 @@ g++ -std=c++20 file.cpp -o exec
 The Heston equation is just another model that accounts for stochastic volatility
 
 The equation of the asset is:
-$$ 
-dS_t = rS_t dt + \sqrt{v_t}S_t dW_t^{(1)}
-$$
+$$dS_t = rS_t dt + \sqrt{v_t}S_t dW_t^{(1)}$$
+
 where $v_t$ is the variance of the asset's price (volatility squared $v_t = \sigma^2$)
 
 The equation of the variance throughout time is:
-$$
-dv_t = \kappa(\theta - v_t)dt + \xi\sqrt{v_t}dW_t^{(2)}
-$$
+$$dv_t = \kappa(\theta - v_t)dt + \xi\sqrt{v_t}dW_t^{(2)}$$
+
 Where $\kappa$ is the mean-reversion speed of the variance, $\theta$ is the long run variance, $\xi$ is the volatility of variance
 
 Both of the Brownian motions $W_t^{(1)}$ and $W_t^{(2)}$ are both correlation with a correlation factor $\rho$ . The equation to show this is:
-$$ dW_t^{(1)} dW_t^{(2)} = \rho dt$$
+$$dW_t^{(1)} dW_t^{(2)} = \rho dt$$
+
 These equations are what is going to be used in order to price the options, using a Monte Carlo simulation.
 
 A problem with a lot of these models is the fact that the variance can hit 0. The **Feller Condition** tell us whether the fluctuations in variance are strong enough compared to the mean reversion such that it does not hit 0. 
