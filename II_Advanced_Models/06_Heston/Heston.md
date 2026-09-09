@@ -108,6 +108,6 @@ where $\gamma_1, \gamma_2$ are weighting parameters which satisfy $\gamma_1 + \g
 15. Calculate $S_t$ using $S_t = \exp(X_t)$
 16. Calculate the option prices like done from 6.1 - 6.3
 
-![Heston variance comparison](./Figure1.png)
+![Heston variance comparison](./volatilitycomparison.png)
 
 
