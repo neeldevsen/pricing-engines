@@ -114,5 +114,5 @@ As you can see, the volatility of the Euler scheme becomes NaN pretty early (sin
 
 The other parameters used for this graph are:
 $\rho = -0.7$, $\kappa = 0.2$, $\xi = 0.3$, $N = 252$ and $M = 1,000,000$
-
+Which does satisfy the Feller condition 
 
