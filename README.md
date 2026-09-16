@@ -1,8 +1,7 @@
-<<<<<<< HEAD
 For parts 1-5 please refer to this [PDF1](./I_Classical_Models_and_Methods/PDF/PricingEngines.pdf) for the .1 subparts and this [PDF2](./I_Classical_Models_and_Methods/PDF/SupplementEngines.pdf) for the .2 and .3 subparts.
 =======
-For parts 1-5 please refer to this [PDF1](./PricingEngines.pdf) for the x.1 subparts and this [PDF2](./SupplementEngines.pdf) for the x.2 and x.3 subparts.
->>>>>>> 2d784cef6d24102b5a801bfd82b7904bd8588539
+For parts 1-5 please refer to this [PDF1](./I_Classical_Models_and_Methods/PDF/PricingEngines.pdf) for the x.1 subparts and this [PDF2](./I_Classical_Models_and_Methods/PDF/SupplementEngines.pdf) for the x.2 and x.3 subparts.
+
 
 So far implemented:
 1. Black Scholes Closed Forms
@@ -22,8 +21,6 @@ pricing-engines/
 ├── README.md
 ├── LICENSE
 ├── .gitignore
-├── PricingEngines.pdf
-├── SupplementEngines.pdf
 ├── ConvegenceStudy.pdf
 │
 ├── Headers/
@@ -34,7 +31,10 @@ pricing-engines/
 │   ├── 03_Binomial_Trees/
 │   ├── 04_Trinomial_Trees/
 │   ├── 05_Finite_Differences/
-│
+│   ├── PDF/
+│   |  ├── PricingEngines.pdf
+│   |  ├── SupplementEngines.pdf
+|
 ├── II_Advanced_Models/
 │   ├── 06_Heston/
 │   ├── 07_Jump_Diffusion/
