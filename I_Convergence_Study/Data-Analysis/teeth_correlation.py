@@ -94,6 +94,7 @@ plt.scatter(binomial_tree_dist, residual_binomial_tree_err, label = "Binomial Tr
 plt.scatter(trinomial_tree_dist, residual_trinomial_tree_err, label = "Trinomial Tree", color="red")
 plt.scatter(finite_differences_dist, residual_finite_differences_err, label = "Finite Differences", color="black")
 
+
 plt.title("Relative Gird Alignment vs Residual in Error")
 plt.xlabel("Closest distance of simulated Stock to Strike")
 plt.ylabel("Residual in error")
