@@ -14,6 +14,9 @@ So far implemented:
 - [Convergence Study](./ConvergenceStudy.pdf)
 - Calibration 
 
+17. American Binomial Tree
+18. American Trinomial Tree
+    
 The directory structure is shown below:
 ```text
 
@@ -38,7 +41,10 @@ pricing-engines/
 ├── II_Advanced_Models/
 │   ├── 06_Heston/
 │   ├── 07_Jump_Diffusion/
-│
+|
+├── IV_American_Options/
+│   ├── 17_American_Binomial_Tree/
+│   ├── 18_American_Trinomial_Tree/
 ├── Calibration/
 │
 ├── I_Convergence_Study/
