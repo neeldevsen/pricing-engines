@@ -11,11 +11,13 @@ So far implemented:
 5. Finite Difference Methods
 6. [Heston's Model](./II_Advanced_Models/06_Heston/Heston.md)
 7. Merton's Jump Diffusion Model
-17. American Binomial Tree
-18. American Trinomial Tree
 
 - [Convergence Study](./ConvergenceStudy.pdf)
 - Calibration 
+
+17. American Binomial Tree
+18. American Trinomial Tree
+
 
 The directory structure is shown below:
 ```text
