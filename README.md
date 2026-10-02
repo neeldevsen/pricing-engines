@@ -18,7 +18,10 @@ So far implemented:
 17. American Binomial Tree
 18. American Trinomial Tree
 
-
+26. Barrier Options
+27. Asian Options
+28. Digital Options
+    
 The directory structure is shown below:
 ```text
 
@@ -47,6 +50,11 @@ pricing-engines/
 ├── IV_American_Options/
 │   ├── 17_American_Binomial_Tree/
 │   ├── 18_American_Trinomial_Tree/
+|
+├── VI_Exotic_Options/
+│   ├── 28_Barrier_Options/
+│   ├── 29_Asian_Options/
+│   ├── 30_Digital_Options/
 |
 ├── Calibration/
 │
