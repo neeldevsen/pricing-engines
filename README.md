@@ -2,6 +2,7 @@ For parts 1-5 please refer to this [PDF1](./I_Classical_Models_and_Methods/PDF/P
 =======
 For parts 1-5 please refer to this [PDF1](./I_Classical_Models_and_Methods/PDF/PricingEngines.pdf) for the x.1 subparts and this [PDF2](./I_Classical_Models_and_Methods/PDF/SupplementEngines.pdf) for the x.2 and x.3 subparts.
 
+P.S: there is a reason there is missing numbers, I don't create these in order but I have an overall order in mind and I stick to it
 
 So far implemented:
 1. Black Scholes Closed Forms
