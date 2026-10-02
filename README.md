@@ -19,6 +19,8 @@ So far implemented:
 17. American Binomial Tree
 18. American Trinomial Tree
 
+- And then some other pricing engines such as exotic options:
+  
 26. Barrier Options
 27. Asian Options
 28. Digital Options
