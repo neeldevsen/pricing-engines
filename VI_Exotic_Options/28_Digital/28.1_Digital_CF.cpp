@@ -1,0 +1,48 @@
+#include <iostream>
+#include <cmath>
+#include <type_traits>
+#include <iomanip>
+#include "../../Headers/functions.hpp"
+#include "../../Headers/black_scholes_struct.hpp"
+
+template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+auto DigitalCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data) -> decltype(data.spot)
+{
+    using CommonType = decltype(data.spot);
+    auto sqrt_maturity {std::sqrt(data.maturity)};
+
+    auto d2 {(std::log(data.spot / data.strike) + (data.rate - (static_cast<CommonType>(0.5) * data.volatility * data.volatility)) * (data.maturity))/ (data.volatility * sqrt_maturity)};
+
+
+    auto C {std::exp(-data.rate * data.maturity) * normalCDF(d2)};
+    return C;
+}
+
+template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
+auto DigitalPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data) -> decltype(data.spot)
+{
+    using CommonType = decltype(data.spot);
+    auto sqrt_maturity {std::sqrt(data.maturity)};
+    
+    auto d2 {(std::log(data.spot / data.strike) + (data.rate - (static_cast<CommonType>(0.5) * data.volatility * data.volatility)) * (data.maturity))/ (data.volatility * sqrt_maturity)};
+
+    auto P  {std::exp(-data.rate * data.maturity) * normalCDF(-d2)};
+    return P;
+}
+
+int main()
+{
+    OptionDataBS myOption {100.0, 100.0, 0.05, 0.2, 1.0};
+    std::cout << std::setprecision(17);
+    std::cout << "Call price: $" << DigitalCall(myOption) << '\n';
+    std::cout << "Put price: $" << DigitalPut(myOption) << '\n';
+
+    return 0;  
+}
+
+
+
+ 
+
+
+

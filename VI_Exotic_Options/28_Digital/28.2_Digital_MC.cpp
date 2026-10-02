@@ -16,7 +16,10 @@ auto monteCarloBSCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int
     for (int i {}; i < simulations; ++i)
     {
         commonType S_final {data.spot * std::exp((data.rate - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
-        payoffs += std::max(S_final - data.strike, static_cast<commonType>(0));
+        if (S_final > data.strike)
+        {
+            payoffs += static_cast<commonType>(1);
+        }
     }
     payoffs /= simulations;
     
@@ -35,7 +38,10 @@ auto monteCarloBSPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int 
     for (int i {}; i < simulations; ++i)
     {
         commonType S_final {data.spot * std::exp((data.rate - 0.5 * data.volatility * data.volatility) * data.maturity + (data.volatility * W(mt)))};
-        payoffs += std::max(data.strike - S_final , static_cast<commonType>(0));
+        if (S_final < data.strike)
+        {
+            payoffs += static_cast<commonType>(1);
+        }
     }
     payoffs /= simulations;
 
@@ -46,7 +52,7 @@ auto monteCarloBSPut(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, int 
 int main()
 {
     int simulations {10000000};
-    OptionDataBS myOption {100, 100, 0.01, 0.3, 30};
+    OptionDataBS myOption {100, 100, 0.01, 0.3, 1};
     std::cout << "Call price: $" << monteCarloBSCall(myOption, simulations) << '\n';
     std::cout << "Put price: $" << monteCarloBSPut(myOption, simulations) << '\n';
 

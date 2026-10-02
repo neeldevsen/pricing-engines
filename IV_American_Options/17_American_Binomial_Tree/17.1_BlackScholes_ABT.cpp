@@ -6,7 +6,7 @@
 #include "../../Headers/black_scholes_struct.hpp"
 
 template <typename S_t, typename K_t, typename r_t, typename sigma_t, typename T_t>
-auto americanBinomialTreeBSCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, const int N) -> decltype(data.spot)
+auto americanTrinomialTreeBSCall(const OptionDataBS<S_t, K_t, r_t, sigma_t, T_t>& data, const int N) -> decltype(data.spot)
 {
     using commonType = decltype(data.spot);
     
