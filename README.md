@@ -2,6 +2,7 @@ For parts 1-5 please refer to this [PDF1](./I_Classical_Models_and_Methods/PDF/P
 =======
 For parts 1-5 please refer to this [PDF1](./I_Classical_Models_and_Methods/PDF/PricingEngines.pdf) for the x.1 subparts and this [PDF2](./I_Classical_Models_and_Methods/PDF/SupplementEngines.pdf) for the x.2 and x.3 subparts.
 
+P.S: there is a reason there is missing numbers, I don't create these in order but I have an overall order in mind and I stick to it
 
 So far implemented:
 1. Black Scholes Closed Forms
@@ -18,7 +19,12 @@ So far implemented:
 17. American Binomial Tree
 18. American Trinomial Tree
 
-
+- And then some other pricing engines such as exotic options:
+  
+26. Barrier Options
+27. Asian Options
+28. Digital Options
+    
 The directory structure is shown below:
 ```text
 
@@ -47,6 +53,11 @@ pricing-engines/
 ├── IV_American_Options/
 │   ├── 17_American_Binomial_Tree/
 │   ├── 18_American_Trinomial_Tree/
+|
+├── VI_Exotic_Options/
+│   ├── 28_Barrier_Options/
+│   ├── 29_Asian_Options/
+│   ├── 30_Digital_Options/
 |
 ├── Calibration/
 │
