@@ -43,10 +43,10 @@ pricing-engines/
 ├── 07_Jump_Diffusion/
 ├── 08_American_Binomial_Tree/
 ├── 09_American_Trinomial_Tree/
-├── 10 Barrier_Options
-├── 11 Asian_Options
-├── 12 Digital_Options
-
+├── 10_Barrier_Options/
+├── 11_Asian_Options/
+├── 12_Digital_Options/
+|
 ├── Calibration/
 │
 ├── I_Convergence_Study/
