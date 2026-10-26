@@ -1,6 +1,6 @@
 For parts 1-5 please refer to this [PDF1](./I_Classical_Models_and_Methods/PDF/PricingEngines.pdf) for the .1 subparts and this [PDF2](./I_Classical_Models_and_Methods/PDF/SupplementEngines.pdf) for the .2 and .3 subparts.
 =======
-For parts 1-5 please refer to this [PDF1](./I_Classical_Models_and_Methods/PDF/PricingEngines.pdf) for the x.1 subparts and this [PDF2](./I_Classical_Models_and_Methods/PDF/SupplementEngines.pdf) for the x.2 and x.3 subparts.
+For parts 1-5 please refer to this [PDF1](PDF/PricingEngines.pdf) for the x.1 subparts and this [PDF2](PDF/SupplementEngines.pdf) for the x.2 and x.3 subparts.
 
 So far implemented:
 1. Black Scholes Closed Forms
@@ -16,7 +16,7 @@ So far implemented:
 11. Asian Options
 12. Digital Options
 
-- [Convergence Study](./ConvergenceStudy.pdf)
+- [Convergence Study](ConvergenceStudy.pdf)
 - Calibration 
     
 The directory structure is shown below:
